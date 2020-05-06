@@ -18,11 +18,29 @@ class GameScene extends Phaser.Scene {
 		this.load.image('wall', '../images/wall.png');
 		this.load.image('bullet', '../images/bullet.png');
 		this.load.atlas('player', '../images/player.png', '../images/player.json');
+
+		//Load music and sound effects
+		this.load.audio("shootSound", "../sound/shoot.mp3");
+		this.load.audio("music", "../sound/tempMusic.mp3");
 	}
 
 	/**Loads assets used for the scene
 	*/
 	create() {
+
+			// Music config
+			this.music = this.sound.add("music");
+			var musicConfig = {
+				mute: false,
+				volume: 1,
+				rate: 1,
+				detune: 0,
+				seek: 0,
+				loop: true,
+				delay: 0
+			}
+			this.music.play(musicConfig);
+
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
 
@@ -53,6 +71,8 @@ class GameScene extends Phaser.Scene {
 			this.playerBullets = this.add.group();
 			this.fireRate = 500;
 			this.nextFire = 0;
+
+			this.bulletSound = this.sound.add("shootSound");
 
 			//make bullets disappear if hit wall
 			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
@@ -96,6 +116,7 @@ class GameScene extends Phaser.Scene {
 			if (this.time.now > this.nextFire){
 				this.nextFire = this.time.now + this.fireRate;
 				this.fire();
+				this.bulletSound.play();
 			}
     }
 
