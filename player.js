@@ -80,25 +80,25 @@ class Player extends Phaser.Physics.Arcade.Sprite{
   }
 
   left(){
-    player.setVelocityX(-80);
-    player.play("left", true);
+    this.setVelocityX(-80);
+    this.play("left", true);
   }
 
   up(){
-    player.setVelocityY(-80);
-    player.play("up", true);
+    this.setVelocityY(-80);
+    this.play("up", true);
   }
 
   down(){
-    player.setVelocityY(80);
-    player.play("down", true);
+    this.setVelocityY(80);
+    this.play("down", true);
   }
 
   idleX(){
-    player.setVelocityX(0);
+    this.setVelocityX(0);
   }
 
   idleY(){
-    player.setVelocityY(0);
+    this.setVelocityY(0);
   }
 }

@@ -1,8 +1,4 @@
-var player;
-var pointer;
-
 class GameScene extends Phaser.Scene {
-
 
 	constructor() {
 		super({key:'gameScene'});
@@ -12,6 +8,7 @@ class GameScene extends Phaser.Scene {
 		//Loading atlas and images used for the game
 		this.load.image('gameBackground', 'images/hahaa.jpg');
 		this.load.image('wall', 'images/wall.png');
+		this.load.image('bullet', 'images/bullet.png');
 		this.load.atlas('player', 'images/player.png', 'images/player.json');
 	}
 
@@ -24,64 +21,84 @@ class GameScene extends Phaser.Scene {
 		  bg.setOrigin(0,0);
 
 			// create player class
-			player = new Player(this, 400, 300, 'player', 'player01.png');
-			player.create(this);
+			this.player = new Player(this, 400, 300, 'player', 'player01.png');
+			this.player.create(this);
 
 
 			// create placeholder walls to test collison out
-			var wallOne = this.physics.add.sprite(100, 100, 'wall').setScale(.25);
-			var wallTwo = this.physics.add.sprite(200, 200, 'wall').setScale(.25);
-			var walls = this.add.group();
+			this.wallOne = this.physics.add.sprite(100, 100, 'wall').setScale(.25);
+			this.wallTwo = this.physics.add.sprite(200, 200, 'wall').setScale(.25);
+			this.walls = this.add.group();
 
-			walls.add(wallOne);
-			walls.add(wallTwo);
+			this.walls.add(this.wallOne);
+			this.walls.add(this.wallTwo);
 
-			for (var i = 0; i < walls.getChildren().length; i++) {
-	      var wall = walls.getChildren()[i];
+			//walls.setAll('body.immovable', true);
+			//Looking for a way to make this more efficient
+
+			for (var i = 0; i < this.walls.getChildren().length; i++) {
+	      var wall = this.walls.getChildren()[i];
 	      wall.setImmovable(true);
 	    }
-			//overlap function currently not used
-			//this.physics.add.overlap(player, walls, this.stop, null, this);
 
-			this.physics.add.collider(player, walls);
+
+			// create placeholder bullets to test out spawning multiple objects, .5 second delay
+			this.playerBullets = this.add.group();
+			this.fireRate = 500;
+			this.nextFire = 0;
+
+			//make bullets disappear if hit wall
+			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
+
+			//collison between player and the walls
+			this.physics.add.collider(this.player, this.walls);
 
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
 
-			// draw line between cursor and player, THIS SHIT I NEED HELP WITH
-			//pointer = this.input.activePointer;
-			//this.input.on("pointermove", () => this.add.line(0,0,pointer.x,pointer.y,player.x,player.y, 0xff0000));
 	}
 	update() {
 
 		// THIS SECTION IS JUST FOR THE CONTROLS
 		if(this.keyboard.D.isDown === true){
-			player.right();
+			this.player.right();
 		}
 		if(this.keyboard.A.isDown === true){
-			player.left();
+			this.player.left();
 		}
 
 		if(this.keyboard.A.isUp === true && this.keyboard.D.isUp === true){
-			player.idleX();
+			this.player.idleX();
 		}
 
 		if(this.keyboard.S.isDown === true){
-			player.down();
+			this.player.down();
 		}
+
 		if(this.keyboard.W.isDown === true){
-			player.up();
+			this.player.up();
 		}
 
 		if(this.keyboard.S.isUp === true && this.keyboard.W.isUp === true){
-			player.idleY();
+			this.player.idleY();
 		}
+
+		if (game.input.activePointer.isDown){
+			console.log(this.input.y + " & " + this.cameras.main.scrollY);
+			if (this.time.now > this.nextFire){
+				this.nextFire = this.time.now + this.fireRate;
+				this.fire();
+			}
+    }
 
 	}
 
-	//stop function currently not used
-	//stop(player, wall){
-	//
-	//}
+	fire(){
+		var bullet = new Bullet(this, 100).setScale(.5);
+	}
+
+	disappear(bullet, wall){
+		bullet.destroy();
+	}
 
 }
