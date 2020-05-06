@@ -1,5 +1,4 @@
-
-//* Game scene */
+// default starting game config
 var config = {
   type: Phaser.AUTO,
   width: 800,
