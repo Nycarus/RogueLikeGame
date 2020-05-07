@@ -13,6 +13,10 @@ class GameScene extends Phaser.Scene {
 	/**Preloads assets used for the scene
 	*/
 	preload() {
+		//Load tileset and tilemap
+		this.load.image('mc_tiles', 'images/tilesets/minecraft_tileset.png');
+		this.load.tilemapTiledJSON('room1', 'images/tilesets/mc_dungeon.json');
+
 		//Loading atlas and images used for the game
 		this.load.image('gameBackground', '../images/hahaa.jpg');
 		this.load.image('wall', '../images/wall.png');
@@ -27,12 +31,25 @@ class GameScene extends Phaser.Scene {
 	/**Loads assets used for the scene
 	*/
 	create() {
+			// Create tileset and tilemap
+			this.map = this.make.tilemap({key: "room1"});
+			this.tileset = this.map.addTilesetImage('mc_tileset','mc_tiles');
+			this.floorLayer = this.map.createStaticLayer("floor", this.tileset, 0, 0);
+			this.wallLayer = this.map.createStaticLayer("walls", this.tileset, 0, 0);
+			this.wallLayer.setCollisionByProperty({collides: true});
+			this.debugGraphics = this.add.graphics().setAlpha(0.75);
+			//add hitbox detection to walls
+			this.wallLayer.renderDebug(this.debugGraphics, {
+				tileColor: null, // Color of non-colliding tiles
+				collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+				faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+			  });
 
 			// Music config
 			this.music = this.sound.add("music");
 			var musicConfig = {
 				mute: false,
-				volume: 1,
+				volume: 0.2,
 				rate: 1,
 				detune: 0,
 				seek: 0,
@@ -44,35 +61,32 @@ class GameScene extends Phaser.Scene {
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
 
-			// set the background image
-		 	var bg = this.add.sprite(0,0,'gameBackground');
-		  bg.setOrigin(0,0);
+			//create spawn point
+			this.spawnPoint = this.map.findObject("Objects", obj => obj.name === "spawnPoint");
 
 			// create player class
-			this.player = new Player(this, 400, 300, 'player', 'player01.png');
+			this.player = new Player(this, this.spawnPoint.x, this.spawnPoint.y, 'player', 'player01.png');
 			this.player.create(this);
 
+			//collision detection with player vs wall
+			this.physics.add.collider(this.player, this.wallLayer);
 
 			// create placeholder walls to test collison out
 			this.walls = this.add.group();
 			this.wallOne = new Wall(this, 100, 100, 'wall');
 			this.wallTwo = new Wall(this, 200, 200, 'wall');
 
-			//walls.setAll('body.immovable', true);
-			//Looking for a way to make this more efficient
-
-			//for (var i = 0; i < this.walls.getChildren().length; i++) {
-	    //  var wall = this.walls.getChildren()[i];
-	    //  wall.setImmovable(true);
-	    //}
-
-
 			// create placeholder bullets to test out spawning multiple objects, .5 second delay
 			this.playerBullets = this.add.group();
 			this.fireRate = 500;
 			this.nextFire = 0;
 
+			//bullet sound config
 			this.bulletSound = this.sound.add("shootSound");
+			this.bulletSoundConfig = {
+				mute: false,
+				volume: 0.2,
+			}
 
 			//make bullets disappear if hit wall
 			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
@@ -91,6 +105,7 @@ class GameScene extends Phaser.Scene {
 		if(this.keyboard.D.isDown === true){
 			this.player.right();
 		}
+		
 		if(this.keyboard.A.isDown === true){
 			this.player.left();
 		}
@@ -112,11 +127,11 @@ class GameScene extends Phaser.Scene {
 		}
 
 		if (game.input.activePointer.isDown){
-			console.log(this.input.y + " & " + this.cameras.main.scrollY);
+			//console.log(this.input.y + " & " + this.cameras.main.scrollY);
 			if (this.time.now > this.nextFire){
 				this.nextFire = this.time.now + this.fireRate;
 				this.fire();
-				this.bulletSound.play();
+				this.bulletSound.play(this.bulletSoundConfig);
 			}
     }
 
