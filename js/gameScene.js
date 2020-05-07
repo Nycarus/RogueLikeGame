@@ -68,8 +68,6 @@ class GameScene extends Phaser.Scene {
 			this.player = new Player(this, this.spawnPoint.x, this.spawnPoint.y, 'player', 'player01.png');
 			this.player.create(this);
 
-			//collision detection with player vs wall
-			this.physics.add.collider(this.player, this.wallLayer);
 
 			// create placeholder walls to test collison out
 			this.walls = this.add.group();
@@ -91,6 +89,12 @@ class GameScene extends Phaser.Scene {
 			//make bullets disappear if hit wall
 			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
 
+			//collision detection with player vs wall
+			this.physics.add.collider(this.player, this.wallLayer);
+
+			//collison detection between player bullets and the layer wall
+			this.physics.add.collider(this.playerBullets, this.wallLayer, this.disappear, null, this);
+
 			//collison between player and the walls
 			this.physics.add.collider(this.player, this.walls);
 
@@ -105,7 +109,7 @@ class GameScene extends Phaser.Scene {
 		if(this.keyboard.D.isDown === true){
 			this.player.right();
 		}
-		
+
 		if(this.keyboard.A.isDown === true){
 			this.player.left();
 		}
