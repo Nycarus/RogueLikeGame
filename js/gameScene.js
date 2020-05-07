@@ -70,7 +70,7 @@ class GameScene extends Phaser.Scene {
 
 			//collision detection with player vs wall
 			this.physics.add.collider(this.player, this.wallLayer);
-
+			
 			// create placeholder walls to test collison out
 			this.walls = this.add.group();
 			this.wallOne = new Wall(this, 100, 100, 'wall');
@@ -133,8 +133,7 @@ class GameScene extends Phaser.Scene {
 				this.fire();
 				this.bulletSound.play(this.bulletSoundConfig);
 			}
-    }
-
+    	}
 	}
 
 	/**Creates a bullet class */
