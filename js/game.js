@@ -14,8 +14,8 @@ var config = {
 }
 //adjust player's movement and bullet speed
 var playerSettings = {
-  playerSpeed: 150,
-  bulletSpeed: 300,
+  playerSpeed: 300,
+  bulletSpeed: 600,
 }
 
 // run the config

@@ -13,7 +13,21 @@ class TitleScene extends Phaser.Scene {
 	/**Preloads assets used for the scene
 	*/
 	preload() {
+		//Xing background
 		this.load.image('background', '../images/background.jpg');
+		//Load tileset and tilemap
+		this.load.image('mc_tiles', 'images/tilesets/minecraft_tileset.png');
+		this.load.tilemapTiledJSON('room1', 'images/tilesets/mc_dungeon.json');
+
+		//Loading atlas and images used for the game
+		this.load.image('gameBackground', '../images/hahaa.jpg');
+		this.load.image('wall', '../images/wall.png');
+		this.load.image('bullet', '../images/bullet.png');
+		this.load.atlas('player', '../images/player.png', '../images/player.json');
+
+		//Load music and sound effects
+		this.load.audio("shootSound", "../sound/shoot.mp3");
+		this.load.audio("music", "../sound/tempMusic.mp3");
 	}
 
 

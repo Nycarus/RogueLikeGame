@@ -10,24 +10,6 @@ class GameScene extends Phaser.Scene {
 		super({key:'gameScene'});
 	}
 
-	/**Preloads assets used for the scene
-	*/
-	preload() {
-		//Load tileset and tilemap
-		this.load.image('mc_tiles', 'images/tilesets/minecraft_tileset.png');
-		this.load.tilemapTiledJSON('room1', 'images/tilesets/mc_dungeon.json');
-
-		//Loading atlas and images used for the game
-		this.load.image('gameBackground', '../images/hahaa.jpg');
-		this.load.image('wall', '../images/wall.png');
-		this.load.image('bullet', '../images/bullet.png');
-		this.load.atlas('player', '../images/player.png', '../images/player.json');
-
-		//Load music and sound effects
-		this.load.audio("shootSound", "../sound/shoot.mp3");
-		this.load.audio("music", "../sound/tempMusic.mp3");
-	}
-
 	/**Loads assets used for the scene
 	*/
 	create() {
@@ -38,6 +20,7 @@ class GameScene extends Phaser.Scene {
 			this.wallLayer = this.map.createStaticLayer("walls", this.tileset, 0, 0);
 			this.wallLayer.setCollisionByProperty({collides: true});
 			this.debugGraphics = this.add.graphics().setAlpha(0.75);
+
 			//add hitbox detection to walls
 			this.wallLayer.renderDebug(this.debugGraphics, {
 				tileColor: null, // Color of non-colliding tiles
@@ -56,17 +39,31 @@ class GameScene extends Phaser.Scene {
 				loop: true,
 				delay: 0
 			}
+		
 			this.music.play(musicConfig);
 
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
 
-			//create spawn point
-			this.spawnPoint = this.map.findObject("Objects", obj => obj.name === "spawnPoint");
+			//loop through all objects in map
+			this.rooms = [];
+			this.map.findObject("Objects", function(object) {
 
-			// create player class
-			this.player = new Player(this, this.spawnPoint.x, this.spawnPoint.y, 'player', 'player01.png');
-			this.player.create(this);
+				if (object.type === 'room') {
+					this.rooms.push(object);
+				}
+				//player is created on spawnpoint
+				if (object.name === 'spawnPoint') {
+					this.player = new Player(this, object.x, object.y, 'player', 'player01.png');
+					this.player.create(this);
+				}
+			}, this);
+
+			// create camera 
+			this.camera = this.cameras.main;
+			this.camera.startFollow(this.player);
+			//set camera bounds, player cannot see beyond void
+			this.camera.setBounds(0, 0, config.width, config.height);
 
 			//collision detection with player vs wall
 			this.physics.add.collider(this.player, this.wallLayer);
@@ -88,25 +85,24 @@ class GameScene extends Phaser.Scene {
 				volume: 0.2,
 			}
 
-			//make bullets disappear if hit wall
+			// make bullets disappear if hit wall
 			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
 
-			//collision detection with player vs wall
+			// collision detection with player vs wall
 			this.physics.add.collider(this.player, this.wallLayer);
 
-			//collison detection between player bullets and the layer wall
+			// collison detection between player bullets and the layer wall
 			this.physics.add.collider(this.playerBullets, this.wallLayer, this.disappear, null, this);
 
-			//collison between player and the walls
+			// collison detection between player and the walls
 			this.physics.add.collider(this.player, this.walls);
 
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
+		}
 
-	}
-	/**The function called per frame to update every object */
-	update() {
-
+	/** The function that controls player movement */
+	playerMove() {
 		// THIS SECTION IS JUST FOR THE CONTROLS
 		if(this.keyboard.D.isDown === true){
 			this.player.right();
@@ -131,15 +127,35 @@ class GameScene extends Phaser.Scene {
 		if(this.keyboard.S.isUp === true && this.keyboard.W.isUp === true){
 			this.player.idleY();
 		}
+	}
 
+	/**The function that controls player shooting */
+	playerShoot() {
 		if (game.input.activePointer.isDown){
-			//console.log(this.input.y + " & " + this.cameras.main.scrollY);
 			if (this.time.now > this.nextFire){
 				this.nextFire = this.time.now + this.fireRate;
 				this.fire();
 				this.bulletSound.play(this.bulletSoundConfig);
 			}
-    	}
+		}
+	}
+	/** The function that changes the player from previous room to current room */
+	roomChange() {
+		if (this.player.roomChange) {
+			this.cameras.main.setBounds(this.rooms[this.player.currentRoom].x,
+										this.rooms[this.player.currentRoom].y,
+										this.rooms[this.player.currentRoom].width,
+										this.rooms[this.player.currentRoom].height,
+										true);
+		}
+	}
+
+	/**The function called per frame to update every object */
+	update() {
+		this.playerMove();
+		this.playerShoot();
+		this.player.getRoom();
+		this.roomChange();
 	}
 
 	/**Creates a bullet class */
