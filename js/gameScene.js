@@ -40,33 +40,17 @@ class GameScene extends Phaser.Scene {
 			this.wallOne = new Wall(this, 100, 100, 'wall');
 			this.wallTwo = new Wall(this, 200, 200, 'wall');
 
-<<<<<<< Updated upstream
-			//walls.setAll('body.immovable', true);
-			//Looking for a way to make this more efficient
-
-			//for (var i = 0; i < this.walls.getChildren().length; i++) {
-	    //  var wall = this.walls.getChildren()[i];
-	    //  wall.setImmovable(true);
-	    //}
-
-=======
 			// create placeholder enemies to test collision and player interactions
 			this.enemies = this.add.group();
 			this.enemy1 = new Enemy(this, 300, 100, 'wall');
 			this.enemy2 = new Enemy(this, 600, 300, 'wall');
 			
->>>>>>> Stashed changes
 
 			// create placeholder bullets to test out spawning multiple objects, .5 second delay
 			this.playerBullets = this.add.group();
 			this.fireRate = 500;
 			this.nextFire = 0;
 
-<<<<<<< Updated upstream
-			//make bullets disappear if hit wall
-			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
-
-=======
 			this.enemyBullets = this.add.group();
 
 			//bullet sound config
@@ -103,7 +87,6 @@ class GameScene extends Phaser.Scene {
 			//collison detection between enemy bullets and the layer wall
 			this.physics.add.collider(this.enemyBullets, this.wallLayer, this.disappear, null, this);
 
->>>>>>> Stashed changes
 			//collison between player and the walls
 			this.physics.add.collider(this.player, this.walls);
 

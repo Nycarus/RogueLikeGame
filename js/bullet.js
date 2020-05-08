@@ -15,12 +15,5 @@ class Bullet extends Phaser.GameObjects.Sprite{
     scene.sys.updateList.add(this);
     scene.sys.displayList.add(this);
     scene.physics.world.enableBody(this);
-<<<<<<< Updated upstream
-    scene.playerBullets.add(this);
-
-    // Moves the bullet from the player to the mouse cursor
-    scene.physics.moveTo(this, scene.input.x + scene.cameras.main.scrollX, scene.input.y + scene.cameras.main.scrollY, 200, null);
-=======
->>>>>>> Stashed changes
   }
 }
