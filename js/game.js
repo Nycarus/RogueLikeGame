@@ -12,6 +12,11 @@ var config = {
     }
   }
 }
+//adjust player's movement and bullet speed
+var playerSettings = {
+  playerSpeed: 300,
+  bulletSpeed: 600,
+}
 
 // run the config
 var game = new Phaser.Game(config);
