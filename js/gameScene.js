@@ -40,6 +40,7 @@ class GameScene extends Phaser.Scene {
 			this.wallOne = new Wall(this, 100, 100, 'wall');
 			this.wallTwo = new Wall(this, 200, 200, 'wall');
 
+<<<<<<< Updated upstream
 			//walls.setAll('body.immovable', true);
 			//Looking for a way to make this more efficient
 
@@ -48,17 +49,66 @@ class GameScene extends Phaser.Scene {
 	    //  wall.setImmovable(true);
 	    //}
 
+=======
+			// create placeholder enemies to test collision and player interactions
+			this.enemies = this.add.group();
+			this.enemy1 = new Enemy(this, 300, 100, 'wall');
+			this.enemy2 = new Enemy(this, 600, 300, 'wall');
+			
+>>>>>>> Stashed changes
 
 			// create placeholder bullets to test out spawning multiple objects, .5 second delay
 			this.playerBullets = this.add.group();
 			this.fireRate = 500;
 			this.nextFire = 0;
 
+<<<<<<< Updated upstream
 			//make bullets disappear if hit wall
 			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
 
+=======
+			this.enemyBullets = this.add.group();
+
+			//bullet sound config
+			this.bulletSound = this.sound.add("shootSound");
+			this.bulletSoundConfig = {
+				mute: false,
+				volume: 0.2,
+			}
+
+			//make bullets disappear if hit wall
+			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
+
+			//make bullets disappear if hit an enemy
+			this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
+
+			//make enemy bullets disappear if hit wall
+			this.physics.add.overlap(this.enemyBullets, this.walls, this.disappear, null, this);
+
+			//make enemy bullets disappear if hit an player
+			this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
+
+			//collision detection with player vs wall
+			this.physics.add.collider(this.player, this.wallLayer);
+
+			//collision detection with enemy vs wall
+			this.physics.add.collider(this.enemies, this.wallLayer);
+
+			//collision detection with player vs enemy
+			this.physics.add.collider(this.player, this.enemies);
+
+			//collison detection between player bullets and the layer wall
+			this.physics.add.collider(this.playerBullets, this.wallLayer, this.disappear, null, this);
+
+			//collison detection between enemy bullets and the layer wall
+			this.physics.add.collider(this.enemyBullets, this.wallLayer, this.disappear, null, this);
+
+>>>>>>> Stashed changes
 			//collison between player and the walls
 			this.physics.add.collider(this.player, this.walls);
+
+			//collision detection with enemy vs wall
+			this.physics.add.collider(this.enemies, this.walls);
 
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
@@ -97,18 +147,24 @@ class GameScene extends Phaser.Scene {
 				this.nextFire = this.time.now + this.fireRate;
 				this.fire();
 			}
-    }
-
+		}
 	}
 
 	/**Creates a bullet class */
 	fire(){
-		var bullet = new Bullet(this, 100).setScale(.5);
+		var bullet = new PlayerBullet(this, 100).setScale(.5);
+		this.bulletSound.play(this.bulletSoundConfig);
 	}
 
 	/**When a bullet and a wall collides, the bullet entity will be deleted */
 	disappear(bullet, wall){
 		bullet.destroy();
 	}
+	
 
+	enemyFire(x,y)
+	{
+		var bullet = new EnemyBullet(this, x, y, 100).setScale(.5);
+		this.bulletSound.play(this.scene.bulletSoundConfig);
+	}
 }
