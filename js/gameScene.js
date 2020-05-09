@@ -44,6 +44,9 @@ class GameScene extends Phaser.Scene {
 
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
+			
+			//set camera
+			this.camera = this.cameras.main;
 
 			//loop through all objects in map
 			this.rooms = [];
@@ -58,12 +61,6 @@ class GameScene extends Phaser.Scene {
 					this.player.create(this);
 				}
 			}, this);
-
-			// create camera 
-			this.camera = this.cameras.main;
-			this.camera.startFollow(this.player);
-			//set camera bounds, player cannot see beyond void
-			this.camera.setBounds(0, 0, config.width, config.height);
 
 			//collision detection with player vs wall
 			this.physics.add.collider(this.player, this.wallLayer);
@@ -99,33 +96,39 @@ class GameScene extends Phaser.Scene {
 
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
+
+			this.canMove = false;
 		}
 
 	/** The function that controls player movement */
 	playerMove() {
+		this.player.idleX();
+		this.player.idleY();
 		// THIS SECTION IS JUST FOR THE CONTROLS
-		if(this.keyboard.D.isDown === true){
-			this.player.right();
-		}
+		if (this.canMove) {
+			if(this.keyboard.D.isDown === true){
+				this.player.right();
+			}
 
-		if(this.keyboard.A.isDown === true){
-			this.player.left();
-		}
+			if(this.keyboard.A.isDown === true){
+				this.player.left();
+			}
 
-		if(this.keyboard.A.isUp === true && this.keyboard.D.isUp === true){
-			this.player.idleX();
-		}
+			if(this.keyboard.A.isUp === true && this.keyboard.D.isUp === true){
+				this.player.idleX();
+			}
 
-		if(this.keyboard.S.isDown === true){
-			this.player.down();
-		}
+			if(this.keyboard.S.isDown === true){
+				this.player.down();
+			}
 
-		if(this.keyboard.W.isDown === true){
-			this.player.up();
-		}
+			if(this.keyboard.W.isDown === true){
+				this.player.up();
+			}
 
-		if(this.keyboard.S.isUp === true && this.keyboard.W.isUp === true){
-			this.player.idleY();
+			if(this.keyboard.S.isUp === true && this.keyboard.W.isUp === true){
+				this.player.idleY();
+			}
 		}
 	}
 
@@ -142,20 +145,20 @@ class GameScene extends Phaser.Scene {
 	/** The function that changes the player from previous room to current room */
 	roomChange() {
 		if (this.player.roomChange) {
-			this.cameras.main.setBounds(this.rooms[this.player.currentRoom].x,
-										this.rooms[this.player.currentRoom].y,
-										this.rooms[this.player.currentRoom].width,
-										this.rooms[this.player.currentRoom].height,
-										true);
+			this.canMove = false;
+			this.cameras.main.pan(this.rooms[this.player.currentRoom].x + this.rooms[this.player.currentRoom].width/2,
+								  this.rooms[this.player.currentRoom].y + this.rooms[this.player.currentRoom].height/2,
+								  500);
+			this.canMove = true;	
 		}
 	}
 
 	/**The function called per frame to update every object */
 	update() {
+		this.roomChange();
 		this.playerMove();
 		this.playerShoot();
 		this.player.getRoom();
-		this.roomChange();
 	}
 
 	/**Creates a bullet class */

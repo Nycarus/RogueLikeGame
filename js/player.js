@@ -21,7 +21,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     this.currentRoom = 1;
     this.previousRoom = null;
     this.roomChange = false;
-
   }
 
   /**Loads assets used for the scene
@@ -158,5 +157,4 @@ class Player extends Phaser.Physics.Arcade.Sprite{
       this.roomChange = false;
     }
   }
-
 }
