@@ -15,6 +15,14 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     scene.sys.updateList.add(this);
     scene.sys.displayList.add(this);
     scene.physics.world.enableBody(this);
+
+    //This variables are created so player can switch rooms
+    this.scene = scene;
+    this.currentRoom = 1;
+    this.previousRoom = null;
+    this.roomChange = false;
+    this.keyboard = scene.input.keyboard.addKeys("W, A, S, D");
+
   }
 
   /**Loads assets used for the scene
@@ -84,47 +92,48 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     });
 
   }
+  update(){
+    const prevVelocity = this.body.velocity.clone();
 
-  // FUNCTIONS USED AS CONTROLS FOR THE PLAYER SPRITE
+    // Stop any previous movement from the last frame
+    this.setVelocity(0);
 
-  /**Moves the player right
-  */
-  right(){
-    this.setVelocityX(playerSettings.playerSpeed);
-    this.play("right", true);
+    // Horizontal movement
+    if (this.keyboard.A.isDown) {
+      this.setVelocityX(-playerSettings.playerSpeed);
+      this.setFlipX(true);
+    }
+    else if (this.keyboard.D.isDown) {
+      this.setVelocityX(playerSettings.playerSpeed);
+      this.setFlipX(false);
+    }
+
+    // Vertical movement
+    if (this.keyboard.W.isDown) {
+      this.setVelocityY(-playerSettings.playerSpeed);
+    } else if (this.keyboard.S.isDown) {
+      this.setVelocityY(playerSettings.playerSpeed);
+    }
+
+    // Normalize and scale the velocity so that sprite can't move faster along a diagonal
+    this.body.velocity.normalize().scale(playerSettings.playerSpeed);
+
+    // Update the animation last and give left/right/down animations precedence over up animations
+    if (this.keyboard.A.isDown || this.keyboard.D.isDown) {
+      this.play("right", true);
+    }
+    else if (this.keyboard.S.isDown){
+      this.play("down", true)
+    }
+    else if (this.keyboard.W.isDown) {
+      this.play("up", true);
+    }
+    else {
+      this.anims.stop();
+      // If we were moving & now we're not, then pick a single idle frame to use
+      this.setTexture("player", 0);
+    }
   }
 
-  /**Moves the player left
-  */
-  left(){
-    this.setVelocityX(-playerSettings.playerSpeed);
-    this.play("left", true);
-  }
-
-  /**Moves the player up
-  */
-  up(){
-    this.setVelocityY(-playerSettings.playerSpeed);
-    this.play("up", true);
-  }
-
-  /**Moves the player down
-  */
-  down(){
-    this.setVelocityY(playerSettings.playerSpeed);
-    this.play("down", true);
-  }
-
-  /**Stops the player from moving horizontally
-  */
-  idleX(){
-    this.setVelocityX(0);
-  }
-
-  /**Stops the player from moving vertically
-  */
-  idleY(){
-    this.setVelocityY(0);
-  }
 
 }
