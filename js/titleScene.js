@@ -13,6 +13,7 @@ class TitleScene extends Phaser.Scene {
 	/**Preloads assets used for the scene
 	*/
 	preload() {
+		//Xing background
 		this.load.image('background', '../images/background.jpg');
 		//Load tileset and tilemap
 		this.load.image('mc_tiles', 'images/tilesets/minecraft_tileset.png');

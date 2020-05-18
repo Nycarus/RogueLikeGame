@@ -10,24 +10,6 @@ class GameScene extends Phaser.Scene {
 		super({key:'gameScene'});
 	}
 
-	/**Preloads assets used for the scene
-	*/
-	preload() {
-		//Load tileset and tilemap
-		this.load.image('mc_tiles', 'images/tilesets/minecraft_tileset.png');
-		this.load.tilemapTiledJSON('room1', 'images/tilesets/mc_dungeon.json');
-
-		//Loading atlas and images used for the game
-		this.load.image('gameBackground', '../images/hahaa.jpg');
-		this.load.image('wall', '../images/wall.png');
-		this.load.image('bullet', '../images/bullet.png');
-		this.load.atlas('player', '../images/player.png', '../images/player.json');
-
-		//Load music and sound effects
-		this.load.audio("shootSound", "../sound/shoot.mp3");
-		this.load.audio("music", "../sound/tempMusic.mp3");
-	}
-
 	/**Loads assets used for the scene
 	*/
 	create() {
@@ -85,6 +67,8 @@ class GameScene extends Phaser.Scene {
 			//set camera bounds, player cannot see beyond void
 			//this.camera.setBounds(0, 0, config.width, config.height);
 
+			//collision detection with player vs wall
+			this.physics.add.collider(this.player, this.wallLayer);
 
 			// create placeholder walls to test collison out
 			this.walls = this.add.group();
@@ -102,6 +86,8 @@ class GameScene extends Phaser.Scene {
 			this.fireRate = 500;
 			this.nextFire = 0;
 
+			this.enemyBullets = this.add.group();
+
 			//bullet sound config
 			this.bulletSound = this.sound.add("shootSound");
 			this.bulletSoundConfig = {
@@ -112,14 +98,35 @@ class GameScene extends Phaser.Scene {
 			//make bullets disappear if hit wall
 			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
 
+			//make bullets disappear if hit an enemy
+			this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
+
+			//make enemy bullets disappear if hit wall
+			this.physics.add.overlap(this.enemyBullets, this.walls, this.disappear, null, this);
+
+			//make enemy bullets disappear if hit an player
+			this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
+
 			//collision detection with player vs wall
 			this.physics.add.collider(this.player, this.wallLayer);
+
+			//collision detection with enemy vs wall
+			this.physics.add.collider(this.enemies, this.wallLayer);
+
+			//collision detection with player vs enemy
+			this.physics.add.collider(this.player, this.enemies);
 
 			//collison detection between player bullets and the layer wall
 			this.physics.add.collider(this.playerBullets, this.wallLayer, this.disappear, null, this);
 
+			//collison detection between enemy bullets and the layer wall
+			this.physics.add.collider(this.enemyBullets, this.wallLayer, this.disappear, null, this);
+
 			//collison between player and the walls
 			this.physics.add.collider(this.player, this.walls);
+
+			//collision detection with enemy vs wall
+			this.physics.add.collider(this.enemies, this.walls);
 
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
@@ -128,13 +135,22 @@ class GameScene extends Phaser.Scene {
 	/**The function that controls player shooting */
 	playerShoot() {
 		if (game.input.activePointer.isDown){
-			//console.log(this.input.y + " & " + this.cameras.main.scrollY);
 			if (this.time.now > this.nextFire){
 				this.nextFire = this.time.now + this.fireRate;
 				this.fire();
 				this.bulletSound.play(this.bulletSoundConfig);
 			}
-    }
+		}
+	}
+	/** The function that changes the player from previous room to current room */
+	roomChange() {
+		if (this.player.roomChange) {
+			this.cameras.main.setBounds(this.rooms[this.player.currentRoom].x,
+										this.rooms[this.player.currentRoom].y,
+										this.rooms[this.player.currentRoom].width,
+										this.rooms[this.player.currentRoom].height,
+										true);
+		}
 	}
 
 	/**The function called per frame to update every object */
@@ -147,7 +163,8 @@ class GameScene extends Phaser.Scene {
 
 	/**Creates a bullet class */
 	fire(){
-		var bullet = new Bullet(this, 100).setScale(.5);
+		var bullet = new PlayerBullet(this, 100).setScale(.5);
+		this.bulletSound.play(this.bulletSoundConfig);
 	}
 
 	/**When a bullet and a wall collides, the bullet entity will be deleted */
@@ -156,4 +173,9 @@ class GameScene extends Phaser.Scene {
 	}
 
 
+	enemyFire(x,y)
+	{
+		var bullet = new EnemyBullet(this, x, y, 100).setScale(.5);
+		this.bulletSound.play(this.scene.bulletSoundConfig);
+	}
 }
