@@ -25,6 +25,9 @@ class TitleScene extends Phaser.Scene {
 		this.load.image('bullet', '../images/bullet.png');
 		this.load.atlas('player', '../images/player.png', '../images/player.json');
 
+		//Load spritesheet used for the dungeon
+		this.load.image("tiles", "../images/testTiles.png");
+
 		//Load music and sound effects
 		this.load.audio("shootSound", "../sound/shoot.mp3");
 		this.load.audio("music", "../sound/tempMusic.mp3");
@@ -46,7 +49,7 @@ class TitleScene extends Phaser.Scene {
 	/**Function to switch game scenes
 	*/
 	clickButton() {
-    this.scene.switch('gameScene');
+    this.scene.switch('dungeonScene');
 	}
 
 }

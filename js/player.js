@@ -92,6 +92,9 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     });
 
   }
+  freeze() {
+    this.body.moves = false;
+  }
   update(){
     const prevVelocity = this.body.velocity.clone();
 
