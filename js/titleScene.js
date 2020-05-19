@@ -30,7 +30,6 @@ class TitleScene extends Phaser.Scene {
 		this.load.audio("music", "../sound/tempMusic.mp3");
 	}
 
-
 	/**Loads assets used for the scene
 	*/
 	create() {

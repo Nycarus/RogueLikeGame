@@ -19,14 +19,6 @@ class GameScene extends Phaser.Scene {
 			this.floorLayer = this.map.createStaticLayer("Background", this.tileset, 0, 0);
 			this.wallLayer = this.map.createStaticLayer("Walls", this.tileset, 0, 0);
 			this.wallLayer.setCollisionByProperty({collides: true});
-			//this.debugGraphics = this.add.graphics().setAlpha(0.75);
-
-			//add hitbox detection to walls
-			//this.wallLayer.renderDebug(this.debugGraphics, {
-			//	tileColor: null, // Color of non-colliding tiles
-			//	collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-			//	faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-			//  });
 
 			// Music config
 			this.music = this.sound.add("music");
@@ -45,27 +37,11 @@ class GameScene extends Phaser.Scene {
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
 
-			//loop through all objects in map
-			//this.rooms = [];
-			//this.map.findObject("Objects", function(object) {
-			//
-			//	if (object.type === 'room') {
-			//		this.rooms.push(object);
-			//	}
-			//	//player is created on spawnpoint
-			//	if (object.name === 'spawnPoint') {
-			//		this.player = new Player(this, object.x, object.y, 'player', 'player01.png');
-			//		console.log(object.x + "and" + object.y)
-			//		this.player.create(this);
-			//	}
-			//}, this);
 			this.player = new Player(this, 500, 500, 'player', 'player01.png')
 			this.player.create(this);
-			// create camera
-			//this.camera = this.cameras.main;
-			//this.camera.startFollow(this.player);
-			//set camera bounds, player cannot see beyond void
-			//this.camera.setBounds(0, 0, config.width, config.height);
+
+	    // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
+	    this.cameras.main.startFollow(this.player);
 
 			//collision detection with player vs wall
 			this.physics.add.collider(this.player, this.wallLayer);
