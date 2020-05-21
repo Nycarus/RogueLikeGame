@@ -50,7 +50,7 @@ class DungeonScene extends Phaser.Scene {
 			//bullet sound config
 			this.bulletSound = this.sound.add("shootSound");
 			this.bulletSoundConfig = {
-				mute: false,
+				mute: true,
 				volume: 0.2,
 			}
 

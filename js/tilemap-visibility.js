@@ -3,9 +3,10 @@
  * room is currently active.
  */
 class TilemapVisibility {
-  constructor(shadowLayer) {
+  constructor(shadowLayer, scene) {
     this.shadowLayer = shadowLayer;
     this.activeRoom = null;
+    this.scene = scene;
   }
 
   setActiveRoom(room) {
@@ -27,5 +28,22 @@ class TilemapVisibility {
       room.width,
       room.height
     );
+  }
+  // Test
+  deActivate(){
+    var eachEnemy = this.scene.enemies.getChildren();
+    for (var i = 0; i < eachEnemy.length; i++) {
+      if (this.activeRoom == eachEnemy[i].room){
+        eachEnemy[i].visible = true;
+        eachEnemy[i].update();
+      }
+      else{
+        eachEnemy[i].visible = false;
+      }
+    }
+  }
+
+  update(){
+    this.deActivate();
   }
 }

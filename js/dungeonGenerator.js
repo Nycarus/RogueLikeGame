@@ -28,7 +28,7 @@ class DungeonGenerator {
   this.stuffLayer = map.createBlankDynamicLayer("Stuff", tileset);
   const shadowLayer = map.createBlankDynamicLayer("Shadow", tileset).fill(TILES.BLANK);
 
-  this.tilemapVisibility = new TilemapVisibility(shadowLayer);
+  this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.scene);
 
   // Use the array of rooms generated to place tiles in the map
   // Note: using an arrow function here so that "this" still refers to our scene
@@ -84,9 +84,9 @@ class DungeonGenerator {
     var rand = Math.random();
     if (rand <= 0.25) {
       // 25% chance of chest
-      this.scene.enemy1 = new Enemy(this.scene, this.groundLayer.tileToWorldX(room.centerX), this.groundLayer.tileToWorldY(room.centerY), 'wall');
     } else if (rand <= 0.5) {
       // 50% chance of idk
+      this.scene.enemy1 = new Enemy(this.scene, this.groundLayer.tileToWorldX(room.centerX), this.groundLayer.tileToWorldY(room.centerY), 'wall', room);
     } else {
       // 25% idk
     }
@@ -128,5 +128,6 @@ class DungeonGenerator {
     const playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
 
     this.tilemapVisibility.setActiveRoom(playerRoom);
+    this.tilemapVisibility.update();
   }
 }
