@@ -1,15 +1,13 @@
 class DungeonGenerator {
   constructor(scene) {
     this.scene = scene
-    this.level = 0
   }
 
   create(){
-    this.level++
     this.hasPlayerReachedStairs = false
     this.dungeon = new Dungeon({
-      width: 100,
-      height: 100,
+      width: 50,
+      height: 50,
       doorPadding: 5,
       rooms: {
         width: { min: 10, max: 11, onlyOdd: true },
@@ -81,6 +79,19 @@ class DungeonGenerator {
   // Place the stairs
   this.stuffLayer.putTileAt(TILES.STAIRS, endRoom.centerX, endRoom.centerY);
 
+  // Place stuff in the 90% "otherRooms"
+  otherRooms.forEach(room => {
+    var rand = Math.random();
+    if (rand <= 0.25) {
+      // 25% chance of chest
+      this.scene.enemy1 = new Enemy(this.scene, this.groundLayer.tileToWorldX(room.centerX), this.groundLayer.tileToWorldY(room.centerY), 'wall');
+    } else if (rand <= 0.5) {
+      // 50% chance of idk
+    } else {
+      // 25% idk
+    }
+  });
+
   // Not exactly correct for the tileset since there are more possible floor tiles, but this will
   // do for the example.
   this.groundLayer.setCollisionByExclusion([1, 6, 32, 33, 34]);
@@ -93,6 +104,7 @@ class DungeonGenerator {
     const cam = this.scene.cameras.main;
     cam.fade(250, 0, 0, 0);
     cam.once("camerafadeoutcomplete", () => {
+      this.scene.music.stop();
       this.scene.scene.restart();
     });
   });
@@ -104,11 +116,6 @@ class DungeonGenerator {
   this.scene.player.setX(x);
   this.scene.player.setY(y);
   this.scene.player.setDepth(2);
-
-  // Watch the player and tilemap layers for collisions, for the duration of the scene:
-  this.scene.physics.add.collider(this.scene.player, this.groundLayer);
-  this.scene.physics.add.collider(this.scene.player, this.stuffLayer);
-  this.scene.physics.add.collider(this.scene.playerBullets, this.groundLayer, this.scene.disappear, null, this);
 }
 
   update(time, delta) {

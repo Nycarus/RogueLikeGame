@@ -13,12 +13,6 @@ class DungeonScene extends Phaser.Scene {
 	/**Loads assets used for the scene
 	*/
 	create() {
-			// Create tileset and tilemap
-			//this.map = this.make.tilemap({key: "room1"});
-			//this.tileset = this.map.addTilesetImage('mc_tileset','mc_tiles');
-			//this.floorLayer = this.map.createStaticLayer("Background", this.tileset, 0, 0);
-			//this.wallLayer = this.map.createStaticLayer("Walls", this.tileset, 0, 0);
-			//this.wallLayer.setCollisionByProperty({collides: true});
 
 			// create placeholder bullets to test out spawning multiple objects, .5 second delay
 			this.playerBullets = this.add.group();
@@ -28,6 +22,8 @@ class DungeonScene extends Phaser.Scene {
 			this.player = new Player(this, 500, 500, 'player', 'player01.png')
 			this.player.create(this);
 
+			this.enemies = this.add.group();
+			this.enemyBullets = this.add.group();
 			this.dungeonGenerator = new DungeonGenerator(this);
 			this.dungeonGenerator.create();
 
@@ -35,7 +31,7 @@ class DungeonScene extends Phaser.Scene {
 			this.music = this.sound.add("music");
 			var musicConfig = {
 				mute: false,
-				volume: 0,
+				volume: 0.2,
 				rate: 1,
 				detune: 0,
 				seek: 0,
@@ -51,21 +47,6 @@ class DungeonScene extends Phaser.Scene {
 	    // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
 	    this.cameras.main.startFollow(this.player);
 
-			//collision detection with player vs wall
-			this.physics.add.collider(this.player, this.wallLayer);
-
-			// create placeholder walls to test collison out
-			this.walls = this.add.group();
-			//this.wallOne = new Wall(this, 100, 100, 'wall');
-			//this.wallTwo = new Wall(this, 200, 200, 'wall');
-
-			// create placeholder enemies to test collision and player interactions
-			this.enemies = this.add.group();
-			//this.enemy1 = new Enemy(this, 300, 100, 'wall');
-			//this.enemy2 = new Enemy(this, 600, 300, 'wall');
-
-			this.enemyBullets = this.add.group();
-
 			//bullet sound config
 			this.bulletSound = this.sound.add("shootSound");
 			this.bulletSoundConfig = {
@@ -73,38 +54,24 @@ class DungeonScene extends Phaser.Scene {
 				volume: 0.2,
 			}
 
-			//make bullets disappear if hit wall
-			//this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
+			//make player and certain ground tiles uanble to collide
+			this.physics.add.collider(this.player, this.dungeonGenerator.groundLayer);
+
+			//make player and the walls unable to collide
+		  this.physics.add.collider(this.player, this.dungeonGenerator.stuffLayer);
+
+			//when bullets hit the wall, dissappear
+		  this.physics.add.collider(this.playerBullets, this.dungeonGenerator.groundLayer, this.disappear, null, this);
+		  this.physics.add.collider(this.enemyBullets, this.dungeonGenerator.groundLayer, this.disappear, null, this);
 
 			//make bullets disappear if hit an enemy
-			//this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
-
-			//make enemy bullets disappear if hit wall
-			//this.physics.add.overlap(this.enemyBullets, this.walls, this.disappear, null, this);
+			this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
 
 			//make enemy bullets disappear if hit an player
-			//this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
-
-			//collision detection with player vs wall
-			//this.physics.add.collider(this.player, this.wallLayer);
-
-			//collision detection with enemy vs wall
-			//this.physics.add.collider(this.enemies, this.wallLayer);
+			this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
 
 			//collision detection with player vs enemy
-			//this.physics.add.collider(this.player, this.enemies);
-
-			//collison detection between player bullets and the layer wall
-			//this.physics.add.collider(this.playerBullets, this.wallLayer, this.disappear, null, this);
-
-			//collison detection between enemy bullets and the layer wall
-			//this.physics.add.collider(this.enemyBullets, this.wallLayer, this.disappear, null, this);
-
-			//collison between player and the walls
-			//this.physics.add.collider(this.player, this.walls);
-
-			//collision detection with enemy vs wall
-			//this.physics.add.collider(this.enemies, this.walls);
+			this.physics.add.collider(this.player, this.enemies);
 
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
