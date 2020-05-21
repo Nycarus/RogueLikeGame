@@ -21,6 +21,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     this.currentRoom = 1;
     this.previousRoom = null;
     this.roomChange = false;
+    this.keyboard = scene.input.keyboard.addKeys("W, A, S, D");
+
   }
 
   /**Loads assets used for the scene
@@ -90,46 +92,78 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     });
 
   }
-  // FUNCTIONS USED AS CONTROLS FOR THE PLAYER SPRITE
+  freeze() {
+    this.body.moves = false;
+  }
+  
+  update(){
+    const prevVelocity = this.body.velocity.clone();
 
-  /**Moves the player right
-  */
-  right(){
-    this.setVelocityX(playerSettings.playerSpeed);
-    this.play("right", true);
+    // Stop any previous movement from the last frame
+    this.setVelocity(0);
+
+    // Horizontal movement
+    if (this.keyboard.A.isDown) {
+      this.setVelocityX(-playerSettings.playerSpeed);
+      this.setFlipX(true);
+    }
+    else if (this.keyboard.D.isDown) {
+      this.setVelocityX(playerSettings.playerSpeed);
+      this.setFlipX(false);
+    }
+
+    // Vertical movement
+    if (this.keyboard.W.isDown) {
+      this.setVelocityY(-playerSettings.playerSpeed);
+    } else if (this.keyboard.S.isDown) {
+      this.setVelocityY(playerSettings.playerSpeed);
+    }
+
+    // Normalize and scale the velocity so that sprite can't move faster along a diagonal
+    this.body.velocity.normalize().scale(playerSettings.playerSpeed);
+
+    // Update the animation last and give left/right/down animations precedence over up animations
+    if (this.keyboard.A.isDown || this.keyboard.D.isDown) {
+      this.play("right", true);
+    }
+    else if (this.keyboard.S.isDown){
+      this.play("down", true)
+    }
+    else if (this.keyboard.W.isDown) {
+      this.play("up", true);
+    }
+    else {
+      this.anims.stop();
+      // If we were moving & now we're not, then pick a single idle frame to use
+      this.setTexture("player", 0);
+    }
   }
 
-  /**Moves the player left
-  */
-  left(){
-    this.setVelocityX(-playerSettings.playerSpeed);
-    this.play("left", true);
-  }
 
-  /**Moves the player up
-  */
-  up(){
-    this.setVelocityY(-playerSettings.playerSpeed);
-    this.play("up", true);
-  }
-
-  /**Moves the player down
-  */
-  down(){
-    this.setVelocityY(playerSettings.playerSpeed);
-    this.play("down", true);
-  }
-
-  /**Stops the player from moving horizontally
-  */
-  idleX(){
-    this.setVelocityX(0);
-  }
-
-  /**Stops the player from moving vertically
-  */
-  idleY(){
-    this.setVelocityY(0);
+  //**Gets current player's room location */
+  getRoom() {
+    let roomNumber;
+    //search for all rooms in rooms array in gameScene
+    for (let room in this.scene.rooms) {
+      //get dimensions of room object in tilemap
+      let roomLeft = this.scene.rooms[room].x;
+      let roomRight = this.scene.rooms[room].x + this.scene.rooms[room].width;
+      let roomTop = this.scene.rooms[room].y;
+      let roomBottom = this.scene.rooms[room].y + this.scene.rooms[room].height;
+      //check if player is within room
+      if ( this.x > roomLeft && this.x < roomRight && this.y > roomTop && this.y < roomBottom ) {
+        roomNumber = room;
+      }
+    }
+    //if roomNumber is not equal to the currentRoom, updates the player's location else player doesn't change rooms
+    if (roomNumber != this.currentRoom) {
+      this.previousRoom = this.currentRoom;
+      this.currentRoom = roomNumber;
+      this.roomChange = true;
+    }
+    else {
+      this.roomChange = false;
+    }
   }
 
   //**Gets current player's room location */
