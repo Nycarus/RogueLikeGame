@@ -165,4 +165,30 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     }
   }
 
+  //**Gets current player's room location */
+  getRoom() {
+    let roomNumber;
+    //search for all rooms in rooms array in gameScene
+    for (let room in this.scene.rooms) {
+      //get dimensions of room object in tilemap
+      let roomLeft = this.scene.rooms[room].x;
+      let roomRight = this.scene.rooms[room].x + this.scene.rooms[room].width;
+      let roomTop = this.scene.rooms[room].y;
+      let roomBottom = this.scene.rooms[room].y + this.scene.rooms[room].height;
+      //check if player is within room
+      if ( this.x > roomLeft && this.x < roomRight && this.y > roomTop && this.y < roomBottom ) {
+        roomNumber = room;
+      }
+    }
+    //if roomNumber is not equal to the currentRoom, updates the player's location else player doesn't change rooms
+    if (roomNumber != this.currentRoom) {
+      this.previousRoom = this.currentRoom;
+      this.currentRoom = roomNumber;
+      this.roomChange = true;
+    }
+    else {
+      this.roomChange = false;
+    }
+  }
+
 }
