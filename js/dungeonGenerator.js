@@ -3,8 +3,10 @@ class DungeonGenerator {
     this.scene = scene
   }
 
-  create(){
+  create() {
+    // checks if player has reached exit
     this.hasPlayerReachedStairs = false
+    // Create Dungeon (from API)
     this.dungeon = new Dungeon({
       width: 50,
       height: 50,
@@ -22,12 +24,13 @@ class DungeonGenerator {
     width: this.dungeon.width,
     height: this.dungeon.height
   });
-
+  // Add Tileset Image to map (Minecraft)
   const tileset = map.addTilesetImage("tiles", null, 32, 32, 0, 0);
   this.groundLayer = map.createBlankDynamicLayer("Ground", tileset).fill(TILES.BLANK);
   this.stuffLayer = map.createBlankDynamicLayer("Stuff", tileset);
   const shadowLayer = map.createBlankDynamicLayer("Shadow", tileset).fill(TILES.BLANK);
 
+  //Set Tile Map Visibility to variable
   this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.scene);
 
   // Use the array of rooms generated to place tiles in the map
@@ -110,24 +113,24 @@ class DungeonGenerator {
   });
 
   // Place the player in the first room
-  const playerRoom = startRoom;
-  const x = map.tileToWorldX(playerRoom.centerX);
-  const y = map.tileToWorldY(playerRoom.centerY);
+  this.playerRoom = startRoom;
+  const x = map.tileToWorldX(this.playerRoom.x + 5.5);
+  const y = map.tileToWorldY(this.playerRoom.x + 5.5);
   this.scene.player.setX(x);
   this.scene.player.setY(y);
   this.scene.player.setDepth(2);
-}
+  }
 
   update(time, delta) {
     if (this.hasPlayerReachedStairs) return;
 
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
-    const playerTileX = this.groundLayer.worldToTileX(this.scene.player.x);
-    const playerTileY = this.groundLayer.worldToTileY(this.scene.player.y);
-    const playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
+    this.playerTileX = this.groundLayer.worldToTileX(this.scene.player.x);
+    this.playerTileY = this.groundLayer.worldToTileY(this.scene.player.y);
+    this.playerRoom = this.dungeon.getRoomAt(this.playerTileX, this.playerTileY);
 
-    this.tilemapVisibility.setActiveRoom(playerRoom);
+    this.tilemapVisibility.setActiveRoom(this.playerRoom);
     this.tilemapVisibility.update();
   }
 }
