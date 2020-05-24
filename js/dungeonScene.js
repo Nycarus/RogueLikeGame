@@ -16,8 +16,6 @@ class DungeonScene extends Phaser.Scene {
 
 			// create placeholder bullets to test out spawning multiple objects, .5 second delay
 			this.playerBullets = this.add.group();
-			this.fireRate = 500;
-			this.nextFire = 0;
 
 			this.player = new Player(this, 500, 500, 'player', 'player01.png')
 			this.player.create(this);
@@ -77,29 +75,16 @@ class DungeonScene extends Phaser.Scene {
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
 		}
 
-	/**The function that controls player shooting */
-	playerShoot() {
-		if (game.input.activePointer.isDown){
-			if (this.time.now > this.nextFire){
-				this.nextFire = this.time.now + this.fireRate;
-				this.fire();
-				this.bulletSound.play(this.bulletSoundConfig);
-			}
-		}
-	}
-
 	/**The function called per frame to update every object */
 	update() {
 		this.player.update();
-		this.playerShoot();
 		this.player.getRoom();
 		this.dungeonGenerator.update();
-		//this.roomChange();
 	}
 
 	/**Creates a bullet class */
 	fire(){
-		var bullet = new PlayerBullet(this, 100).setScale(.5);
+		var bullet = new PlayerBullet(this, this.player.getCenter().x, this.player.getCenter().y, 100).setScale(.5);
 		this.bulletSound.play(this.bulletSoundConfig);
 	}
 

@@ -128,6 +128,5 @@ class DungeonGenerator {
     const playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
 
     this.tilemapVisibility.setActiveRoom(playerRoom);
-    this.tilemapVisibility.update();
   }
 }

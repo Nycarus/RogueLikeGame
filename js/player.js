@@ -19,9 +19,12 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     //This variables are created so player can switch rooms
     this.scene = scene;
     this.currentRoom = 1;
+    this.health = 5;
+    this.fireRate = 500;
+    this.nextFire = 0;
     this.previousRoom = null;
     this.roomChange = false;
-    this.keyboard = scene.input.keyboard.addKeys("W, A, S, D");
+    this.keyboard = scene.input.keyboard.addKeys("W, A, S, D, E");
 
   }
 
@@ -92,9 +95,11 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     });
 
   }
+
   freeze() {
     this.body.moves = false;
   }
+
   update(){
     const prevVelocity = this.body.velocity.clone();
 
@@ -118,6 +123,13 @@ class Player extends Phaser.Physics.Arcade.Sprite{
       this.setVelocityY(playerSettings.playerSpeed);
     }
 
+    if (this.keyboard.E.isDown) {
+      playerSettings.playerSpeed *= 2;
+    }
+    if(this.keyboard.E.getDuration() >= 35) {
+      playerSettings.playerSpeed = 300;
+    }
+
     // Normalize and scale the velocity so that sprite can't move faster along a diagonal
     this.body.velocity.normalize().scale(playerSettings.playerSpeed);
 
@@ -136,8 +148,23 @@ class Player extends Phaser.Physics.Arcade.Sprite{
       // If we were moving & now we're not, then pick a single idle frame to use
       this.setTexture("player", 0);
     }
+
+    this.playerClick();
+
   }
 
+  playerClick() {
+		if (game.input.activePointer.leftButtonDown()){
+			if (this.scene.time.now > this.nextFire){
+				this.nextFire = this.scene.time.now + this.fireRate;
+				this.scene.fire();
+				this.scene.bulletSound.play(this.scene.bulletSoundConfig);
+			}
+		}
+    if (game.input.activePointer.rightButtonDown()){
+      // placeholder
+    }
+  }
 
   //**Gets current player's room location */
   getRoom() {
