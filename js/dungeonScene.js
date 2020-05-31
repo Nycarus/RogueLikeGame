@@ -107,12 +107,7 @@ class DungeonScene extends Phaser.Scene {
 		this.dungeonGenerator.playerRoom.y *32 - (config.height/2 - 5.5*32));
 	}
 
-	//TEST FUNCTION
-	inRoom() {
-		return (this.player.x >= this.dungeonGenerator.playerRoom.x * 32) && (this.player.x < 10 * 32) && 
-		(this.player.y >= this.dungeonGenerator.playerRoom.y * 32) && (this.player.y < 10 * 32);
-	}
-	//TEST FUNCTION
+	/**Checks if the player has moved to another room */
 	roomChange() {
 		if (this.roomNumberX === this.dungeonGenerator.playerRoom.x && this.roomNumberY === this.dungeonGenerator.playerRoom.y) {
 			return false;
@@ -122,9 +117,9 @@ class DungeonScene extends Phaser.Scene {
 		}
 	}
 
-	//Good lord... I don't know how to stop player movement during camera pan
+	/**This function pans the camera to the current player room if the room has changed */
 	cameraPan() {
-		if (this.roomChange()){
+		if (this.roomChange()) {
 			this.player.freeze();
 			this.camera.pan((this.dungeonGenerator.playerRoom.x + 5.5)*32,(this.dungeonGenerator.playerRoom.y + 5.5)*32, 250);
 			this.camera.once("camerapancomplete", () => {
@@ -133,7 +128,7 @@ class DungeonScene extends Phaser.Scene {
 				this.roomNumberY = this.dungeonGenerator.playerRoom.y;
 			});
 		}
-	}
+	}	
 
 	/**The function called per frame to update every object */
 	update() {

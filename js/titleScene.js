@@ -16,7 +16,7 @@ class TitleScene extends Phaser.Scene {
 		//Poggers background
 		this.load.image('background', '../images/background.jpg');
 		this.load.image('background1','../images/pogchamp.jpg')
-		
+
 		//Load tileset and tilemap
 		this.load.image('mc_tiles', 'images/tilesets/minecraft_tileset.png');
 		this.load.tilemapTiledJSON('room1', 'images/tilesets/roomNESW.json');
@@ -59,7 +59,7 @@ class TitleScene extends Phaser.Scene {
 	*/
 	clickButton() {
 		this.scene.start('dungeonScene');
-		this.scene.start('hud');
+		this.scene.start('playerHUD');
 	}
 
 }

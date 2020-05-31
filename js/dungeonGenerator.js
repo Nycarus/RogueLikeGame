@@ -8,8 +8,8 @@ class DungeonGenerator {
     this.hasPlayerReachedStairs = false
     // Create Dungeon (from API)
     this.dungeon = new Dungeon({
-      width: 33,
-      height: 33,
+      width: 50,
+      height: 50,
       doorPadding: 5,
       rooms: {
         width: { min: 11, max: 11},
