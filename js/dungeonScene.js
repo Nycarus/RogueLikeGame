@@ -13,12 +13,11 @@ class DungeonScene extends Phaser.Scene {
 	/**Loads assets used for the scene
 	*/
 	create() {
-
+			
 			// create placeholder bullets to test out spawning multiple objects, .5 second delay
 			this.playerBullets = this.add.group();
-			this.fireRate = 500;
+			this.fireRate = 300;
 			this.nextFire = 0;
-			
 			
 			this.player = new Player(this, 500, 500, 'player', 'player01.png')
 			this.player.create(this);
@@ -45,10 +44,21 @@ class DungeonScene extends Phaser.Scene {
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
 
-			this.cameras.main.startFollow(this.player);
-			this.cameras.main.stopFollow(this.player);
+			//set main camera
+			this.camera = this.cameras.main; 
 			//Set camera inside starting room
-			this.cameras.main.setZoom(1.7);
+			this.camera.startFollow(this.player);
+			this.camera.stopFollow(this.player);
+			//zoom camera into room
+			this.camera.setZoom(1.7);
+
+			//set minimap camera
+			//this.minimap = this.cameras.add(config.width/8 * 7, 0, 100, 100).setZoom(0.2).setName('mini');
+			//this.minimap.startFollow(this.player);
+
+			//Track Starting room
+			this.roomNumberX = this.dungeonGenerator.playerRoom.x;
+			this.roomNumberY = this.dungeonGenerator.playerRoom.y;
 
 			//bullet sound config
 			this.bulletSound = this.sound.add("shootSound");
@@ -78,7 +88,7 @@ class DungeonScene extends Phaser.Scene {
 
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
-		}
+	}
 
 	/**The function that controls player shooting */
 	playerShoot() {
@@ -93,7 +103,7 @@ class DungeonScene extends Phaser.Scene {
 
 	/**This function constantly locks the camera on the current player room*/
 	cameraSet() {
-		this.cameras.main.setScroll(this.dungeonGenerator.playerRoom.x *32 - (config.width/2 - 5.5*32), 
+		this.camera.setScroll(this.dungeonGenerator.playerRoom.x *32 - (config.width/2 - 5.5*32), 
 		this.dungeonGenerator.playerRoom.y *32 - (config.height/2 - 5.5*32));
 	}
 
@@ -104,21 +114,25 @@ class DungeonScene extends Phaser.Scene {
 	}
 	//TEST FUNCTION
 	roomChange() {
-		var x = this.player.x
-		var y = this.player.y
-		var door = this.dungeonGenerator.playerRoom.getDoorLocations().includes({x,y});
-		return door
+		if (this.roomNumberX === this.dungeonGenerator.playerRoom.x && this.roomNumberY === this.dungeonGenerator.playerRoom.y) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 	//Good lord... I don't know how to stop player movement during camera pan
 	cameraPan() {
-		//if (this.inRoom()) {
-			//this.player.setMove(false);
-			this.cameras.main.pan((this.dungeonGenerator.playerRoom.x + 5.5)*32,(this.dungeonGenerator.playerRoom.y + 5.5)*32, 250);
-			this.player.setMove(true);
-		//}
-		//console.log(this.inRoom());
-		//console.log(this.dungeonGenerator.playerRoom.x + " " +  this.dungeonGenerator.playerRoom.x + " " + this.player.x/32 + " " + this.player.y/32);
+		if (this.roomChange()){
+			this.player.freeze();
+			this.camera.pan((this.dungeonGenerator.playerRoom.x + 5.5)*32,(this.dungeonGenerator.playerRoom.y + 5.5)*32, 250);
+			this.camera.once("camerapancomplete", () => {
+				this.player.unfreeze();
+				this.roomNumberX = this.dungeonGenerator.playerRoom.x;
+				this.roomNumberY = this.dungeonGenerator.playerRoom.y;
+			});
+		}
 	}
 
 	/**The function called per frame to update every object */
@@ -142,6 +156,6 @@ class DungeonScene extends Phaser.Scene {
 
 	enemyFire(x,y) {
 		var bullet = new EnemyBullet(this, x, y, 100).setScale(.5);
-		this.bulletSound.play(this.scene.bulletSoundConfig);
+		this.bulletSound.play(this.bulletSoundConfig);
 	}
 }

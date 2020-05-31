@@ -8,13 +8,13 @@ class DungeonGenerator {
     this.hasPlayerReachedStairs = false
     // Create Dungeon (from API)
     this.dungeon = new Dungeon({
-      width: 50,
-      height: 50,
+      width: 33,
+      height: 33,
       doorPadding: 5,
       rooms: {
-        width: { min: 10, max: 11, onlyOdd: true },
-        height: { min: 10, max: 11, onlyOdd: true }
-      }
+        width: { min: 11, max: 11},
+        height: { min: 11, max: 11}
+      },
     });
 
   // Creating a blank tilemap with dimensions matching the dungeon
@@ -106,7 +106,7 @@ class DungeonGenerator {
     this.scene.player.freeze();
     const cam = this.scene.cameras.main;
     cam.fade(250, 0, 0, 0);
-    cam.once("camerafadeoutcomplete", () => {
+    cam.on("camerafadeoutcomplete", () => {
       this.scene.music.stop();
       this.scene.scene.restart();
     });

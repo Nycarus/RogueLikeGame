@@ -13,8 +13,10 @@ class TitleScene extends Phaser.Scene {
 	/**Preloads assets used for the scene
 	*/
 	preload() {
-		//Xing background
+		//Poggers background
 		this.load.image('background', '../images/background.jpg');
+		this.load.image('background1','../images/pogchamp.jpg')
+		
 		//Load tileset and tilemap
 		this.load.image('mc_tiles', 'images/tilesets/minecraft_tileset.png');
 		this.load.tilemapTiledJSON('room1', 'images/tilesets/roomNESW.json');
@@ -31,25 +33,33 @@ class TitleScene extends Phaser.Scene {
 		//Load music and sound effects
 		this.load.audio("shootSound", "../sound/shoot.mp3");
 		this.load.audio("music", "../sound/tempMusic.mp3");
+
+		//Load minimap room images
+		this.load.image('room10', '../images/rooms/room10.png');
 	}
 
 	/**Loads assets used for the scene
 	*/
 	create() {
-			//Title screen background
-		 	var bg = this.add.sprite(0,0,'background');
-		  bg.setOrigin(0,0);
+		//Title screen background
+		this.background = this.add.tileSprite(0,0,config.width,config.height,'background1');
+		this.background.setOrigin(0,0);
 
-			//Clickable text which would lead you to the main game
-		  var text = this.add.text(300,300, 'Welcome to our game!');
-			text.setInteractive();
-			text.on('pointerdown', () => this.clickButton());
+		//Clickable text which would lead you to the main game
+		var text = this.add.text(300,300, 'Welcome to our game!', {color: '#000000'});
+		text.setInteractive();
+		text.on('pointerdown', () => this.clickButton());
+	}
+
+	update() {
+		this.background.tilePositionY -= 1;
 	}
 
 	/**Function to switch game scenes
 	*/
 	clickButton() {
-    this.scene.switch('dungeonScene');
+		this.scene.start('dungeonScene');
+		this.scene.start('hud');
 	}
 
 }

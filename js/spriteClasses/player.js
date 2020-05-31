@@ -96,8 +96,8 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     this.body.moves = false;
   }
 
-  setMove(toggle) {
-    this.body.moves = toggle;
+  unfreeze() {
+    this.body.moves = true;
   }
 
   update(){
