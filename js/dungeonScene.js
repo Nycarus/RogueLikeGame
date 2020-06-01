@@ -25,10 +25,6 @@ class DungeonScene extends Phaser.Scene {
 			this.dungeonGenerator = new DungeonGenerator(this);
 			this.dungeonGenerator.create();
 
-			game.scene.start('playerHUD', { prevScene : this});
-			//this.playerHUD = new PlayerHUD(this);
-			//this.playerHUD.create();
-
 			// Music config
 			this.music = this.sound.add("music");
 			var musicConfig = {
@@ -70,7 +66,7 @@ class DungeonScene extends Phaser.Scene {
 			this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
 
 			//make enemy bullets disappear if hit an player
-			this.physics.add.overlap(this.enemyBullets, this.player, this.playerHit, null, this);
+			this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
 
 			//collision detection with player vs enemy
 			this.physics.add.collider(this.player, this.enemies);
@@ -94,11 +90,6 @@ class DungeonScene extends Phaser.Scene {
 
 	/**When a bullet and a wall collides, the bullet entity will be deleted */
 	disappear(bullet, wall){
-		bullet.destroy();
-	}
-
-	playerHit(bullet, player){
-		player.health -= 10;
 		bullet.destroy();
 	}
 

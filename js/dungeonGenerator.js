@@ -1,6 +1,6 @@
 class DungeonGenerator {
   constructor(scene) {
-    this.scene = scene;
+    this.scene = scene
   }
 
   create(){
