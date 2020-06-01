@@ -110,9 +110,9 @@ class DungeonGenerator {
   });
 
   // Place the player in the first room
-  const playerRoom = startRoom;
-  const x = map.tileToWorldX(playerRoom.centerX);
-  const y = map.tileToWorldY(playerRoom.centerY);
+  this.playerRoom = startRoom;
+  const x = map.tileToWorldX(this.playerRoom.centerX);
+  const y = map.tileToWorldY(this.playerRoom.centerY);
   this.scene.player.setX(x);
   this.scene.player.setY(y);
   this.scene.player.setDepth(2);
@@ -123,10 +123,10 @@ class DungeonGenerator {
 
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
-    const playerTileX = this.groundLayer.worldToTileX(this.scene.player.x);
-    const playerTileY = this.groundLayer.worldToTileY(this.scene.player.y);
-    const playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
+    this.playerTileX = this.groundLayer.worldToTileX(this.scene.player.x);
+    this.playerTileY = this.groundLayer.worldToTileY(this.scene.player.y);
+    this.playerRoom = this.dungeon.getRoomAt(this.playerTileX, this.playerTileY);
 
-    this.tilemapVisibility.setActiveRoom(playerRoom);
+    this.tilemapVisibility.setActiveRoom(this.playerRoom);
   }
 }
