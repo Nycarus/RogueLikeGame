@@ -1,15 +1,13 @@
 class DungeonGenerator {
   constructor(scene) {
-    this.scene = scene
-    this.level = 0
+    this.scene = scene;
   }
 
   create(){
-    this.level++
     this.hasPlayerReachedStairs = false
     this.dungeon = new Dungeon({
-      width: 100,
-      height: 100,
+      width: 50,
+      height: 50,
       doorPadding: 5,
       rooms: {
         width: { min: 10, max: 11, onlyOdd: true },
@@ -30,7 +28,7 @@ class DungeonGenerator {
   this.stuffLayer = map.createBlankDynamicLayer("Stuff", tileset);
   const shadowLayer = map.createBlankDynamicLayer("Shadow", tileset).fill(TILES.BLANK);
 
-  this.tilemapVisibility = new TilemapVisibility(shadowLayer);
+  this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.scene);
 
   // Use the array of rooms generated to place tiles in the map
   // Note: using an arrow function here so that "this" still refers to our scene
@@ -81,6 +79,19 @@ class DungeonGenerator {
   // Place the stairs
   this.stuffLayer.putTileAt(TILES.STAIRS, endRoom.centerX, endRoom.centerY);
 
+  // Place stuff in the 90% "otherRooms"
+  otherRooms.forEach(room => {
+    var rand = Math.random();
+    if (rand <= 0.25) {
+      // 25% chance of chest
+    } else if (rand <= 0.5) {
+      // 50% chance of idk
+      this.scene.enemy1 = new Enemy(this.scene, this.groundLayer.tileToWorldX(room.centerX), this.groundLayer.tileToWorldY(room.centerY), 'wall', room);
+    } else {
+      // 25% idk
+    }
+  });
+
   // Not exactly correct for the tileset since there are more possible floor tiles, but this will
   // do for the example.
   this.groundLayer.setCollisionByExclusion([1, 6, 32, 33, 34]);
@@ -93,22 +104,18 @@ class DungeonGenerator {
     const cam = this.scene.cameras.main;
     cam.fade(250, 0, 0, 0);
     cam.once("camerafadeoutcomplete", () => {
+      this.scene.music.stop();
       this.scene.scene.restart();
     });
   });
 
   // Place the player in the first room
-  const playerRoom = startRoom;
-  const x = map.tileToWorldX(playerRoom.centerX);
-  const y = map.tileToWorldY(playerRoom.centerY);
+  this.playerRoom = startRoom;
+  const x = map.tileToWorldX(this.playerRoom.centerX);
+  const y = map.tileToWorldY(this.playerRoom.centerY);
   this.scene.player.setX(x);
   this.scene.player.setY(y);
   this.scene.player.setDepth(2);
-
-  // Watch the player and tilemap layers for collisions, for the duration of the scene:
-  this.scene.physics.add.collider(this.scene.player, this.groundLayer);
-  this.scene.physics.add.collider(this.scene.player, this.stuffLayer);
-  this.scene.physics.add.collider(this.scene.playerBullets, this.groundLayer, this.scene.disappear, null, this);
 }
 
   update(time, delta) {
@@ -116,10 +123,10 @@ class DungeonGenerator {
 
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
-    const playerTileX = this.groundLayer.worldToTileX(this.scene.player.x);
-    const playerTileY = this.groundLayer.worldToTileY(this.scene.player.y);
-    const playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
+    this.playerTileX = this.groundLayer.worldToTileX(this.scene.player.x);
+    this.playerTileY = this.groundLayer.worldToTileY(this.scene.player.y);
+    this.playerRoom = this.dungeon.getRoomAt(this.playerTileX, this.playerTileY);
 
-    this.tilemapVisibility.setActiveRoom(playerRoom);
+    this.tilemapVisibility.setActiveRoom(this.playerRoom);
   }
 }

@@ -9,7 +9,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
   *@param {number} y - The desired y location of the enemy
   *@param {string} frame - The starting sprite frame of the enemy
   */
-  constructor(scene, x, y, frame){
+  constructor(scene, x, y, frame, room){
     super(scene, x, y, frame);
     scene.sys.updateList.add(this);
     scene.sys.displayList.add(this);
@@ -22,20 +22,16 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
 
     this.fireRate = 1500;
     this.nextFire = 0;
-    
+    this.room = room
+
   }
 
-  preUpdate(time,delta)
-  {
-    this.update();
-  }
 
   /**
    * Method updates the enemy entity
    * @override
    */
   update(){
-    super.update();
     if (this.scene.time.now > this.nextFire){
       this.nextFire = this.scene.time.now + this.fireRate;
       this.scene.enemyFire(this.x, this.y);

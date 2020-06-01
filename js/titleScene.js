@@ -36,6 +36,9 @@ class TitleScene extends Phaser.Scene {
 	/**Loads assets used for the scene
 	*/
 	create() {
+			// Disable right click bringing up browser menu
+			game.input.mouse.disableContextMenu();
+
 			//Title screen background
 		 	var bg = this.add.sprite(0,0,'background');
 		  bg.setOrigin(0,0);

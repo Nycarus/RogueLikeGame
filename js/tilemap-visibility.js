@@ -3,9 +3,10 @@
  * room is currently active.
  */
 class TilemapVisibility {
-  constructor(shadowLayer) {
+  constructor(shadowLayer, scene) {
     this.shadowLayer = shadowLayer;
     this.activeRoom = null;
+    this.scene = scene;
   }
 
   setActiveRoom(room) {
@@ -15,6 +16,7 @@ class TilemapVisibility {
       if (this.activeRoom) this.setRoomAlpha(this.activeRoom, 0.5); // Dim the old room
       this.activeRoom = room;
     }
+    this.deActivate();
   }
 
   // Helper to set the alpha on all tiles within a room
@@ -28,4 +30,19 @@ class TilemapVisibility {
       room.height
     );
   }
+
+  // Only update the enemies in the active room
+  deActivate(){
+    var eachEnemy = this.scene.enemies.getChildren();
+    for (var i = 0; i < eachEnemy.length; i++) {
+      if (this.activeRoom == eachEnemy[i].room){
+        eachEnemy[i].visible = true;
+        eachEnemy[i].update();
+      }
+      else{
+        eachEnemy[i].visible = false;
+      }
+    }
+  }
+
 }
