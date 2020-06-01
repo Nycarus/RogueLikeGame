@@ -43,16 +43,11 @@ class DungeonScene extends Phaser.Scene {
 
 			this.music.play(musicConfig);
 
-			//set main camera
-			this.camera = this.cameras.main;
-			//Set camera inside starting room
-			this.camera.startFollow(this.player);
-			this.camera.stopFollow(this.player);
-			//zoom camera into room
-			this.camera.setZoom(1.7);
-
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
+
+	    // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
+	    this.cameras.main.startFollow(this.player);
 
 			//bullet sound config
 			this.bulletSound = this.sound.add("shootSound");
@@ -96,30 +91,6 @@ class DungeonScene extends Phaser.Scene {
 		var bullet = new PlayerBullet(this, this.player.getCenter().x, this.player.getCenter().y, 100).setScale(.5);
 		this.bulletSound.play(this.bulletSoundConfig);
 	}
-
-	/**Checks if the player has moved to another room */
-	roomChange() {
-		if (this.roomNumberX === this.dungeonGenerator.playerRoom.x && this.roomNumberY === this.dungeonGenerator.playerRoom.y) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
-
-	/**This function pans the camera to the current player room if the room has changed */
-	cameraPan() {
-		if (this.roomChange()) {
-			this.player.freeze();
-			this.camera.pan((this.dungeonGenerator.playerRoom.x + 5.5)*32,(this.dungeonGenerator.playerRoom.y + 5.5)*32, 250);
-			this.camera.once("camerapancomplete", () => {
-				this.player.unfreeze();
-				this.roomNumberX = this.dungeonGenerator.playerRoom.x;
-				this.roomNumberY = this.dungeonGenerator.playerRoom.y;
-			});
-		}
-	}
-
 
 	/**When a bullet and a wall collides, the bullet entity will be deleted */
 	disappear(bullet, wall){
