@@ -3,7 +3,7 @@ var config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  scene: [TitleScene, GameScene, DungeonScene],
+  scene: [TitleScene, DungeonScene, PlayerHUD],
   physics: {
     // we'll use arcade physics for now, I don't know how big the size of the project will actually be
     default: "arcade",
