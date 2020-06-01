@@ -31,33 +31,17 @@ class GameScene extends Phaser.Scene {
 				loop: true,
 				delay: 0
 			}
+
 			this.music.play(musicConfig);
 
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
-			
-			//set camera
-			this.camera = this.cameras.main;
-
-			//loop through all objects in map
-			this.rooms = [];
-			this.map.findObject("Objects", function(object) {
-
-				if (object.type === 'room') {
-					this.rooms.push(object);
-				}
-				//player is created on spawnpoint
-				if (object.name === 'spawnPoint') {
-					this.player = new Player(this, object.x, object.y, 'player', 'player01.png');
-					this.player.create(this);
-				}
-			}, this);
 
 			this.player = new Player(this, 500, 500, 'player', 'player01.png')
 			this.player.create(this);
 
-			// Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
-			this.cameras.main.startFollow(this.player);
+	    // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
+	    this.cameras.main.startFollow(this.player);
 
 			//collision detection with player vs wall
 			this.physics.add.collider(this.player, this.wallLayer);
@@ -87,7 +71,7 @@ class GameScene extends Phaser.Scene {
 				volume: 0.2,
 			}
 
-			// make bullets disappear if hit wall
+			//make bullets disappear if hit wall
 			this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
 
 			//make bullets disappear if hit an enemy

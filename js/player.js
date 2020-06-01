@@ -107,10 +107,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     this.body.moves = false;
   }
 
-  unfreeze() {
-    this.body.moves = true;
-  }
-
   update(){
     const prevVelocity = this.body.velocity.clone();
 
@@ -219,4 +215,5 @@ class Player extends Phaser.Physics.Arcade.Sprite{
       this.roomChange = false;
     }
   }
+
 }
