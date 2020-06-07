@@ -31,7 +31,7 @@ class DungeonScene extends Phaser.Scene {
 			this.music = this.sound.add("music");
 			var musicConfig = {
 				mute: false,
-				volume: 0.01,
+				volume: 0.2,
 				rate: 1,
 				detune: 0,
 				seek: 0,
@@ -62,64 +62,24 @@ class DungeonScene extends Phaser.Scene {
 			this.physics.add.collider(this.player, this.dungeonGenerator.groundLayer);
 
 			//make player and the walls unable to collide
-		  	this.physics.add.collider(this.player, this.dungeonGenerator.stuffLayer);
+		  this.physics.add.collider(this.player, this.dungeonGenerator.stuffLayer);
 
 			//when bullets hit the wall, dissappear
-			this.physics.add.collider(this.playerBullets, this.dungeonGenerator.groundLayer, this.disappear, null, this);
-			this.physics.add.collider(this.enemyBullets, this.dungeonGenerator.groundLayer, this.disappear, null, this);
+		  this.physics.add.collider(this.playerBullets, this.dungeonGenerator.groundLayer, this.disappear, null, this);
+		  this.physics.add.collider(this.enemyBullets, this.dungeonGenerator.groundLayer, this.disappear, null, this);
 
 			//make bullets disappear if hit an enemy
 			this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
 
 			//make enemy bullets disappear if hit an player
-			this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
+			this.physics.add.overlap(this.enemyBullets, this.player, this.playerHit, null, this);
 
 			//collision detection with player vs enemy
 			this.physics.add.collider(this.player, this.enemies);
 
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
-	}
-
-	/**The function that controls player shooting */
-	playerShoot() {
-		if (game.input.activePointer.isDown){
-			if (this.time.now > this.nextFire){
-				this.nextFire = this.time.now + this.fireRate;
-				this.fire();
-				this.bulletSound.play(this.bulletSoundConfig);
-			}
 		}
-	}
-
-	/**This function constantly locks the camera on the current player room*/
-	cameraSet() {
-		this.camera.setScroll(this.dungeonGenerator.playerRoom.x *32 - (config.width/2 - 5.5*32),
-		this.dungeonGenerator.playerRoom.y *32 - (config.height/2 - 5.5*32));
-	}
-
-	/**Checks if the player has moved to another room */
-	roomChange() {
-		if (this.roomNumberX === this.dungeonGenerator.playerRoom.x && this.roomNumberY === this.dungeonGenerator.playerRoom.y) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
-
-	/**This function pans the camera to the current player room if the room has changed */
-	cameraPan() {
-		if (this.roomChange()) {
-			this.player.freeze();
-			this.camera.pan((this.dungeonGenerator.playerRoom.x + 5.5)*32,(this.dungeonGenerator.playerRoom.y + 5.5)*32, 250);
-			this.camera.once("camerapancomplete", () => {
-				this.player.unfreeze();
-				this.roomNumberX = this.dungeonGenerator.playerRoom.x;
-				this.roomNumberY = this.dungeonGenerator.playerRoom.y;
-			});
-		}
-	}
 
 		cameraSet() {
         this.camera.setScroll(this.dungeonGenerator.playerRoom.x *32 - (config.width/2 - 5.5*32),
@@ -140,24 +100,30 @@ class DungeonScene extends Phaser.Scene {
 	/**The function called per frame to update every object */
 	update() {
 		this.player.update();
-		this.playerShoot();
+		this.player.getRoom();
 		this.dungeonGenerator.update();
-		this.cameraPan();
 	}
 
 	/**Creates a bullet class */
-	fire() {
-		var bullet = new PlayerBullet(this, 100).setScale(.5);
+	fire(){
+		var bullet = new PlayerBullet(this, this.player.getCenter().x, this.player.getCenter().y, 100).setScale(.5);
 		this.bulletSound.play(this.bulletSoundConfig);
 	}
 
 	/**When a bullet and a wall collides, the bullet entity will be deleted */
-	disappear(bullet, wall) {
+	disappear(bullet, wall){
 		bullet.destroy();
 	}
 
-	enemyFire(x,y) {
+	playerHit(bullet, player){
+		player.health -= 10;
+		bullet.destroy();
+	}
+
+
+	enemyFire(x,y)
+	{
 		var bullet = new EnemyBullet(this, x, y, 100).setScale(.5);
-		this.bulletSound.play(this.bulletSoundConfig);
+		this.bulletSound.play(this.scene.bulletSoundConfig);
 	}
 }

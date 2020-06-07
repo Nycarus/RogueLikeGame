@@ -1,7 +1,7 @@
 // default starting game config
 var config = {
   type: Phaser.AUTO,
-  width: 600,
+  width: 800,
   height: 600,
   scene: [TitleScene, DungeonScene, PlayerHUD],
   physics: {

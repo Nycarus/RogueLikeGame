@@ -138,7 +138,4 @@ class TilemapVisibility {
     //console.log(string, ...styles);
   }
 
-  update(){
-    this.deActivate();
-  }
 }

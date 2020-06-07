@@ -1,20 +1,18 @@
 class DungeonGenerator {
   constructor(scene) {
-    this.scene = scene
+    this.scene = scene;
   }
 
-  create() {
-    // checks if player has reached exit
+  create(){
     this.hasPlayerReachedStairs = false
-    // Create Dungeon (from API)
     this.dungeon = new Dungeon({
       width: 50,
       height: 50,
       doorPadding: 5,
       rooms: {
-        width: { min: 11, max: 11},
-        height: { min: 11, max: 11}
-      },
+        width: { min: 10, max: 11, onlyOdd: true },
+        height: { min: 10, max: 11, onlyOdd: true }
+      }
     });
 
   // Creating a blank tilemap with dimensions matching the dungeon
@@ -24,13 +22,12 @@ class DungeonGenerator {
     width: this.dungeon.width,
     height: this.dungeon.height
   });
-  // Add Tileset Image to map (Minecraft)
+
   const tileset = map.addTilesetImage("tiles", null, 32, 32, 0, 0);
   this.groundLayer = map.createBlankDynamicLayer("Ground", tileset).fill(TILES.BLANK);
   this.stuffLayer = map.createBlankDynamicLayer("Stuff", tileset);
   const shadowLayer = map.createBlankDynamicLayer("Shadow", tileset).fill(TILES.BLANK);
 
-  //Set Tile Map Visibility to variable
   this.tilemapVisibility = new TilemapVisibility(shadowLayer, this.scene);
 
   // Use the array of rooms generated to place tiles in the map
@@ -124,12 +121,12 @@ class DungeonGenerator {
 
   // Place the player in the first room
   this.playerRoom = startRoom;
-  const x = map.tileToWorldX(this.playerRoom.x + 5.5);
-  const y = map.tileToWorldY(this.playerRoom.x + 5.5);
+  const x = map.tileToWorldX(this.playerRoom.centerX);
+  const y = map.tileToWorldY(this.playerRoom.centerY);
   this.scene.player.setX(x);
   this.scene.player.setY(y);
   this.scene.player.setDepth(2);
-  }
+}
 
   update(time, delta) {
     if (this.hasPlayerReachedStairs) return;
@@ -141,6 +138,5 @@ class DungeonGenerator {
     this.playerRoom = this.dungeon.getRoomAt(this.playerTileX, this.playerTileY);
 
     this.tilemapVisibility.setActiveRoom(this.playerRoom);
-    this.tilemapVisibility.update();
   }
 }
