@@ -93,32 +93,41 @@ class GameScene extends Phaser.Scene {
 			//make bullets disappear if hit an enemy
 			this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
 
-			//make enemy bullets disappear if hit wall
-			this.physics.add.overlap(this.enemyBullets, this.walls, this.disappear, null, this);
+		// create placeholder walls to test collison out
+		this.walls = this.add.group();
+		this.wallOne = new Wall(this, 100, 100, 'wall');
+		this.wallTwo = new Wall(this, 200, 200, 'wall');
 
-			//make enemy bullets disappear if hit an player
-			this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
+		// create placeholder enemies to test collision and player interactions
+		this.enemies = this.add.group();
+		this.enemy1 = new Enemy(this, 300, 100, 'wall');
+		this.enemy2 = new Enemy(this, 600, 300, 'wall');
 
-			//collision detection with player vs wall
-			this.physics.add.collider(this.player, this.wallLayer);
+		// create placeholder bullets to test out spawning multiple objects, .5 second delay
+		this.playerBullets = this.add.group();
+		this.fireRate = 500;
+		this.nextFire = 0;
 
-			//collision detection with enemy vs wall
-			this.physics.add.collider(this.enemies, this.wallLayer);
+		this.enemyBullets = this.add.group();
 
-			//collision detection with player vs enemy
-			this.physics.add.collider(this.player, this.enemies);
+		//bullet sound config
+		this.bulletSound = this.sound.add("shootSound");
+		this.bulletSoundConfig = {
+			mute: false,
+			volume: 0.2,
+		}
 
-			//collison detection between player bullets and the layer wall
-			this.physics.add.collider(this.playerBullets, this.wallLayer, this.disappear, null, this);
+		//make bullets disappear if hit wall
+		this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
 
-			//collison detection between enemy bullets and the layer wall
-			this.physics.add.collider(this.enemyBullets, this.wallLayer, this.disappear, null, this);
+		//make bullets disappear if hit an enemy
+		this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
 
 			//collison between player and the walls
 			this.physics.add.collider(this.player, this.walls);
 
-			//collision detection with enemy vs wall
-			this.physics.add.collider(this.enemies, this.walls);
+		//make enemy bullets disappear if hit an player
+		this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
 
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
