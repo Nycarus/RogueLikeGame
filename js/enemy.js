@@ -9,21 +9,19 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
   *@param {number} y - The desired y location of the enemy
   *@param {string} frame - The starting sprite frame of the enemy
   */
-  constructor(scene, x, y, frame, room){
+  constructor(scene, x, y, frame){
     super(scene, x, y, frame);
     scene.sys.updateList.add(this);
     scene.sys.displayList.add(this);
     scene.physics.world.enableBody(this);
     scene.enemies.add(this);
 
-    this.setScale(0.25);
     this.setImmovable(true);
     this.scene = scene;
 
     this.fireRate = 1500;
     this.nextFire = 0;
-    this.room = room
-
+    this.visible = false;
   }
 
 

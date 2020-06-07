@@ -72,12 +72,18 @@ class DungeonGenerator {
   //  - A random room to be designated as the end room (with stairs and nothing else)
   //  - An array of 90% of the remaining rooms, for placing random stuff (leaving 10% empty)
   const rooms = this.dungeon.rooms.slice();
-  const startRoom = rooms.shift();
+  const startRoom = Phaser.Utils.Array.RemoveRandomElement(rooms);
   const endRoom = Phaser.Utils.Array.RemoveRandomElement(rooms);
   const otherRooms = Phaser.Utils.Array.Shuffle(rooms).slice(0, rooms.length * 0.9);
 
   // Place the stairs
   this.stuffLayer.putTileAt(TILES.STAIRS, endRoom.centerX, endRoom.centerY);
+
+  // doing your mother
+  rooms.forEach(room => {
+    //room.enemies.push("hi");
+    //console.log(room.enemies[0]);
+  });
 
   // Place stuff in the 90% "otherRooms"
   otherRooms.forEach(room => {
@@ -86,7 +92,10 @@ class DungeonGenerator {
       // 25% chance of chest
     } else if (rand <= 0.5) {
       // 50% chance of idk
-      this.scene.enemy1 = new Enemy(this.scene, this.groundLayer.tileToWorldX(room.centerX), this.groundLayer.tileToWorldY(room.centerY), 'wall', room);
+      this.scene.enemy1 = new Enemy(this.scene, this.groundLayer.tileToWorldX(room.centerX), this.groundLayer.tileToWorldY(room.centerY), 'wall');
+      //this.scene.enemy2 = new Enemy(this.scene, this.groundLayer.tileToWorldX(room.centerX + 1), this.groundLayer.tileToWorldY(room.centerY + 1), 'wall');
+      room.enemies.push(this.scene.enemy1);
+      //room.enemies.push(this.scene.enemy2);
     } else {
       // 25% idk
     }
@@ -103,6 +112,7 @@ class DungeonGenerator {
     this.scene.player.freeze();
     const cam = this.scene.cameras.main;
     cam.fade(250, 0, 0, 0);
+    this.dungeon.drawToConsole();
     cam.once("camerafadeoutcomplete", () => {
       this.scene.music.stop();
       this.scene.scene.restart();

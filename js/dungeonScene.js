@@ -17,7 +17,7 @@ class DungeonScene extends Phaser.Scene {
 			// create placeholder bullets to test out spawning multiple objects, .5 second delay
 			this.playerBullets = this.add.group();
 
-			this.player = new Player(this, 500, 500, 'player', 'player01.png')
+			this.player = new Player(this, 500, 500, 'player', 'player01.png');
 			this.player.create(this);
 
 			this.enemies = this.add.group();
@@ -26,8 +26,6 @@ class DungeonScene extends Phaser.Scene {
 			this.dungeonGenerator.create();
 
 			game.scene.start('playerHUD', { prevScene : this});
-			//this.playerHUD = new PlayerHUD(this);
-			//this.playerHUD.create();
 
 			// Music config
 			this.music = this.sound.add("music");
@@ -47,7 +45,11 @@ class DungeonScene extends Phaser.Scene {
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
 
 	    // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
-	    this.cameras.main.startFollow(this.player);
+			this.camera = this.cameras.main;
+			this.cameras.main.startFollow(this.player);
+			this.cameras.main.stopFollow(this.player);
+			//Set camera inside starting room
+			//this.cameras.main.setZoom(1.7);
 
 			//bullet sound config
 			this.bulletSound = this.sound.add("shootSound");
@@ -78,6 +80,22 @@ class DungeonScene extends Phaser.Scene {
 			// WASD controls
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
 		}
+
+		cameraSet() {
+        this.camera.setScroll(this.dungeonGenerator.playerRoom.x *32 - (config.width/2 - 5.5*32),
+        this.dungeonGenerator.playerRoom.y *32 - (config.height/2 - 5.5*32));
+    }
+
+    /**This function pans the camera to the current player room if the room has changed */
+    cameraPan() {
+            this.player.freeze();
+            this.camera.pan((this.dungeonGenerator.playerRoom.centerX)*32,(this.dungeonGenerator.playerRoom.centerY)*32, 250);
+            this.camera.once("camerapancomplete", () => {
+                this.player.unfreeze();
+                this.roomNumberX = this.dungeonGenerator.playerRoom.x;
+                this.roomNumberY = this.dungeonGenerator.playerRoom.y;
+            });
+    }
 
 	/**The function called per frame to update every object */
 	update() {
