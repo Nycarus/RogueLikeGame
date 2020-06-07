@@ -24,7 +24,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
     this.visible = false;
   }
 
-
   /**
    * Method updates the enemy entity
    * @override
