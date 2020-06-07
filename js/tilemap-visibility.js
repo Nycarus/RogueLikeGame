@@ -16,7 +16,6 @@ class TilemapVisibility {
       if (this.activeRoom) this.setRoomAlpha(this.activeRoom, 0.5); // Dim the old room
       this.activeRoom = room;
     }
-    this.deActivate();
   }
 
   // Helper to set the alpha on all tiles within a room
@@ -30,8 +29,7 @@ class TilemapVisibility {
       room.height
     );
   }
-
-  // Only update the enemies in the active room
+  // Test
   deActivate(){
     var eachEnemy = this.scene.enemies.getChildren();
     for (var i = 0; i < eachEnemy.length; i++) {
@@ -45,4 +43,7 @@ class TilemapVisibility {
     }
   }
 
+  update(){
+    this.deActivate();
+  }
 }

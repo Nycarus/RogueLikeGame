@@ -19,19 +19,9 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     //This variables are created so player can switch rooms
     this.scene = scene;
     this.currentRoom = 1;
-    this.health = 100;
-    this.fireRate = 100;
-    this.nextFire = 0;
-
-    this.totalAmmo = 30;
-    this.currentAmmo = 30;
-    this.haveAmmo = true;
-    this.nextReload = 0;
-    this.reloadRate = 3000;
-
     this.previousRoom = null;
     this.roomChange = false;
-    this.keyboard = scene.input.keyboard.addKeys("W, A, S, D, E");
+    this.keyboard = scene.input.keyboard.addKeys("W, A, S, D");
 
   }
 
@@ -102,9 +92,12 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     });
 
   }
-
   freeze() {
     this.body.moves = false;
+  }
+
+  unfreeze() {
+    this.body.moves = true;
   }
 
   update(){
@@ -130,13 +123,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
       this.setVelocityY(playerSettings.playerSpeed);
     }
 
-    if (this.keyboard.E.isDown) {
-      playerSettings.playerSpeed = 900;
-    }
-    if(this.keyboard.E.getDuration() >= 75) {
-      playerSettings.playerSpeed = 300;
-    }
-
     // Normalize and scale the velocity so that sprite can't move faster along a diagonal
     this.body.velocity.normalize().scale(playerSettings.playerSpeed);
 
@@ -145,7 +131,7 @@ class Player extends Phaser.Physics.Arcade.Sprite{
       this.play("right", true);
     }
     else if (this.keyboard.S.isDown){
-      this.play("down", true);
+      this.play("down", true)
     }
     else if (this.keyboard.W.isDown) {
       this.play("up", true);
@@ -154,39 +140,6 @@ class Player extends Phaser.Physics.Arcade.Sprite{
       this.anims.stop();
       // If we were moving & now we're not, then pick a single idle frame to use
       this.setTexture("player", 0);
-    }
-
-    this.playerClick();
-
-    if (this.health < 0){
-      this.health = 0;
-    }
-
-    if (this.health > 100){
-      this.health = 100;
-    }
-  }
-
-  reload() {
-    this.currentAmmo = this.totalAmmo;
-    this.haveAmmo = true;
-  }
-
-  playerClick() {
-		if (game.input.activePointer.leftButtonDown()){
-			if (this.scene.time.now > this.nextFire && this.haveAmmo){
-				this.nextFire = this.scene.time.now + this.fireRate;
-				this.scene.fire();
-				this.scene.bulletSound.play(this.scene.bulletSoundConfig);
-        this.currentAmmo--;
-        if (this.currentAmmo == 0){
-          this.haveAmmo = false;
-          this.scene.time.delayedCall(1500, this.reload, [], this);
-        }
-			}
-		}
-    if (game.input.activePointer.rightButtonDown()){
-      // placeholder
     }
   }
 
@@ -215,5 +168,4 @@ class Player extends Phaser.Physics.Arcade.Sprite{
       this.roomChange = false;
     }
   }
-
 }
