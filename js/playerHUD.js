@@ -8,6 +8,13 @@ class PlayerHUD extends Phaser.Scene {
   }
 
   create(){
+    this.dungeonScene = this.scene.get('dungeonScene');
+    console.log(this.dungeonScene.dungeonGenerator.dungeon.rooms);
+    
+    this.dungeonScene.dungeonGenerator.dungeon.rooms.forEach(room => {
+        this.add.sprite(room.x * 3 + config.width/8 * 6, room.y * 3, 'room10').setOrigin(0,0);
+    });    
+
     this.ammoText = this.dungeonScene.add.text(this.cameras.main.centerX * 2 - 75, this.cameras.main.centerY * 2 - 25, "");
     //this.ammoText = this.dungeonScene.add.text(20, 20, "");
     this.ammoText.setScrollFactor(0);

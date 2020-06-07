@@ -31,6 +31,9 @@ class TitleScene extends Phaser.Scene {
 		//Load music and sound effects
 		this.load.audio("shootSound", "../sound/shoot.mp3");
 		this.load.audio("music", "../sound/tempMusic.mp3");
+
+		//Load minimap room images
+		this.load.image('room10', '../images/rooms/room10.png');
 	}
 
 	/**Loads assets used for the scene
