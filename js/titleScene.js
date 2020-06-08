@@ -33,7 +33,28 @@ class TitleScene extends Phaser.Scene {
 		this.load.audio("music", "../sound/tempMusic.mp3");
 
 		//Load minimap room images
+		this.load.image('room00', '../images/rooms/room00.png');
+		this.load.image('room05105510', '../images/rooms/room01.png');
+		this.load.image('room50105510', '../images/rooms/room02.png');
+		this.load.image('room5005105', '../images/rooms/room03.png');
+		this.load.image('room5005510', '../images/rooms/room04.png');
+		this.load.image('room5005', '../images/rooms/room05.png');
+		this.load.image('room05510', '../images/rooms/room06.png');
+		this.load.image('room105510', '../images/rooms/room07.png');
+		this.load.image('room50105', '../images/rooms/room08.png');
+		this.load.image('room09', '../images/rooms/room09.png');
 		this.load.image('room10', '../images/rooms/room10.png');
+		this.load.image('room05105', '../images/rooms/room11.png');
+		this.load.image('room50510', '../images/rooms/room12.png');
+		this.load.image('room105', '../images/rooms/room13.png');
+		this.load.image('room510', '../images/rooms/room14.png');
+		this.load.image('room05', '../images/rooms/room15.png');
+		this.load.image('room50', '../images/rooms/room16.png');
+
+		//Load X mark image
+		this.load.image('x', '../images/rooms/x.png');
+		//Load tracked room image
+		this.load.image('grey','../images/rooms/grey.png');
 	}
 
 	/**Loads assets used for the scene

@@ -44,7 +44,7 @@ class DungeonScene extends Phaser.Scene {
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
 
-	    // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
+	    	// Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
 			this.camera = this.cameras.main;
 			this.cameras.main.startFollow(this.player);
 			this.cameras.main.stopFollow(this.player);
@@ -81,10 +81,10 @@ class DungeonScene extends Phaser.Scene {
 			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
 		}
 
-		cameraSet() {
+	cameraSet() {
         this.camera.setScroll(this.dungeonGenerator.playerRoom.x *32 - (config.width/2 - 5.5*32),
         this.dungeonGenerator.playerRoom.y *32 - (config.height/2 - 5.5*32));
-    }
+	}
 
     /**This function pans the camera to the current player room if the room has changed */
     cameraPan() {
@@ -93,21 +93,21 @@ class DungeonScene extends Phaser.Scene {
             this.camera.once("camerapancomplete", () => {
                 this.player.unfreeze();
                 this.roomNumberX = this.dungeonGenerator.playerRoom.x;
-                this.roomNumberY = this.dungeonGenerator.playerRoom.y;
+				this.roomNumberY = this.dungeonGenerator.playerRoom.y;
+				//console.log(this.dungeonGenerator.playerRoom.getDoorLocations());
             });
     }
 
 	/**The function called per frame to update every object */
 	update() {
 		this.player.update();
-		this.player.getRoom();
 		this.dungeonGenerator.update();
 	}
 
 	/**Creates a bullet class */
 	fire(){
 		var bullet = new PlayerBullet(this, this.player.getCenter().x, this.player.getCenter().y, 100).setScale(.5);
-		this.bulletSound.play(this.bulletSoundConfig);
+		this.bulletSound.play(this.scene.bulletSoundConfig);
 	}
 
 	/**When a bullet and a wall collides, the bullet entity will be deleted */

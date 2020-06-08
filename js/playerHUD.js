@@ -9,11 +9,18 @@ class PlayerHUD extends Phaser.Scene {
 
   create(){
     this.dungeonScene = this.scene.get('dungeonScene');
-    console.log(this.dungeonScene.dungeonGenerator.dungeon.rooms);
-    
-    this.dungeonScene.dungeonGenerator.dungeon.rooms.forEach(room => {
-        this.add.sprite(room.x * 3 + config.width/8 * 6, room.y * 3, 'room10').setOrigin(0,0);
-    });    
+    this.dungeonGenerator = this.dungeonScene.dungeonGenerator;
+
+    this.currentRoom = this.dungeonGenerator.playerRoom;
+    //console.log(this.dungeonScene.dungeonGenerator.dungeon.rooms);
+
+    this.drawMiniMap();
+
+    //draw greyed room (room tracker)
+    this.greyRoom = this.add.sprite(this.currentRoom.centerX * 3 + config.width/8 * 6 + 1, this.currentRoom.centerY * 3 + 1, 'grey');
+    //draw player X point
+    this.playerPoint = this.add.sprite(this.dungeonGenerator.playerRoom.centerX * 3 + config.width/8 * 6 + 1, 
+      this.dungeonGenerator.playerRoom.centerY * 3 + 1, 'x');
 
     this.ammoText = this.dungeonScene.add.text(this.cameras.main.centerX * 2 - 75, this.cameras.main.centerY * 2 - 25, "");
     //this.ammoText = this.dungeonScene.add.text(20, 20, "");
@@ -28,6 +35,47 @@ class PlayerHUD extends Phaser.Scene {
 
     this.healthBar = this.add.graphics();
     this.barLength = 0;
+  }
+
+  roomChange() {
+    if (this.dungeonGenerator.playerRoom === this.currentRoom) {
+      return false;
+    }
+    return true;
+  }
+
+  drawPlayerPoint() {
+    if (this.roomChange()) {
+      this.currentRoom = this.dungeonGenerator.playerRoom;
+      //draw in grey room
+      this.greyRoom = this.add.sprite(this.currentRoom.centerX * 3 + config.width/8 * 6 + 1, this.currentRoom.centerY * 3 + 1, 'grey');
+      //redraw player point
+      this.playerPoint.destroy();
+      this.playerPoint = this.add.sprite(this.currentRoom.centerX * 3 + config.width/8 * 6 + 1, this.currentRoom.centerY * 3 + 1, 'x');
+    }
+  } 
+
+  drawMiniMap() {
+    this.dungeonScene.dungeonGenerator.dungeon.rooms.forEach(room => {
+      var doors = room.getDoorLocations();
+      if (doors.length === 1) {
+        this.add.sprite(room.x * 3 + config.width/8 * 6, room.y * 3, 'room' + doors[0].x.toString() + doors[0].y.toString()).setOrigin(0,0);
+      }
+      else if (doors.length === 2) {
+        this.add.sprite(room.x * 3 + config.width/8 * 6, room.y * 3, 'room' 
+        + doors[0].x.toString() + doors[0].y.toString() 
+        + doors[1].x.toString() + doors[1].y.toString()).setOrigin(0,0);
+      }
+      else if (doors.length === 3) {
+        this.add.sprite(room.x * 3 + config.width/8 * 6, room.y * 3, 'room' 
+        + doors[0].x.toString() + doors[0].y.toString() 
+        + doors[1].x.toString() + doors[1].y.toString()
+        + doors[2].x.toString() + doors[2].y.toString()).setOrigin(0,0);
+      }
+      else {
+        this.add.sprite(room.x * 3 + config.width/8 * 6, room.y * 3, 'room00').setOrigin(0,0);
+      }
+    });
   }
 
   drawHealthBar(){
@@ -60,5 +108,7 @@ class PlayerHUD extends Phaser.Scene {
     }
 
     this.drawHealthBar();
+
+    this.drawPlayerPoint();
   }
 }

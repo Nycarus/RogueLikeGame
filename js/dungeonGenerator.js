@@ -8,10 +8,10 @@ class DungeonGenerator {
     this.dungeon = new Dungeon({
       width: 50,
       height: 50,
-      doorPadding: 5,
+      doorPadding: 5,  
       rooms: {
-        width: { min: 10, max: 11, onlyOdd: true },
-        height: { min: 10, max: 11, onlyOdd: true }
+        width: { min: 10, max: 11, onlyOdd: true},
+        height: { min: 10, max: 11, onlyOdd: true}
       }
     });
 
@@ -126,6 +126,7 @@ class DungeonGenerator {
   this.scene.player.setX(x);
   this.scene.player.setY(y);
   this.scene.player.setDepth(2);
+
 }
 
   update(time, delta) {
@@ -136,7 +137,6 @@ class DungeonGenerator {
     this.playerTileX = this.groundLayer.worldToTileX(this.scene.player.x);
     this.playerTileY = this.groundLayer.worldToTileY(this.scene.player.y);
     this.playerRoom = this.dungeon.getRoomAt(this.playerTileX, this.playerTileY);
-
     this.tilemapVisibility.setActiveRoom(this.playerRoom);
   }
 }
