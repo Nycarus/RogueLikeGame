@@ -22,23 +22,20 @@ class Enemy extends Phaser.Physics.Arcade.Sprite{
 
     this.fireRate = 1500;
     this.nextFire = 0;
-    
+    this.playerInSight = true;
+    this.scene.addLineOfSight(this, scene.player);
   }
 
   preUpdate(time,delta)
   {
-    this.update();
-  }
-
-  /**
-   * Method updates the enemy entity
-   * @override
-   */
-  update(){
-    super.update();
-    if (this.scene.time.now > this.nextFire){
+    if (this.scene.time.now > this.nextFire && this.playerInSight){
       this.nextFire = this.scene.time.now + this.fireRate;
       this.scene.enemyFire(this.x, this.y);
     }
+  }
+
+  setPlayerInSight(condition)
+  {
+    this.playerInSight = condition;
   }
 }

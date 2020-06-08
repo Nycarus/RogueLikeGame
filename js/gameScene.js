@@ -68,6 +68,8 @@ class GameScene extends Phaser.Scene {
 			//collision detection with player vs wall
 			this.physics.add.collider(this.player, this.wallLayer);
 
+			this.linesOfSight = this.add.group();
+
 			// create placeholder walls to test collison out
 			this.walls = this.add.group();
 			this.wallOne = new Wall(this, 100, 100, 'wall');
@@ -77,7 +79,6 @@ class GameScene extends Phaser.Scene {
 			this.enemies = this.add.group();
 			this.enemy1 = new Enemy(this, 300, 100, 'wall');
 			this.enemy2 = new Enemy(this, 600, 300, 'wall');
-			
 
 			// create placeholder bullets to test out spawning multiple objects, .5 second delay
 			this.playerBullets = this.add.group();
@@ -126,35 +127,42 @@ class GameScene extends Phaser.Scene {
 			//collision detection with enemy vs wall
 			this.physics.add.collider(this.enemies, this.walls);
 
+			//collision between lineofsight and walls
+			this.physics.add.overlap(this.linesOfSight, this.walls, this.lineOfSightBlocked);
+			
+			//collision between lineofsight and wall layers
+			//this.physics.add.overlap(this.linesOfSight, this.wallLayer, this.lineOfSightBlocked);
+
 			// WASD controls
-			this.keyboard = this.input.keyboard.addKeys("W, A, S, D");
+			this.keyboard = this.input.keyboard.addKeys("W, A, S, D, R");
 		}
 
 	/** The function that controls player movement */
 	playerMove() {
 		// THIS SECTION IS JUST FOR THE CONTROLS
-		if(this.keyboard.D.isDown === true){
-			this.player.right();
+		if(this.keyboard.R.isDown === true)
+		{
+			this.player.roll();
 		}
 
-		if(this.keyboard.A.isDown === true){
-			this.player.left();
-		}
-
-		if(this.keyboard.A.isUp === true && this.keyboard.D.isUp === true){
+		if(this.keyboard.A.isDown === true && this.keyboard.D.isDown === true){
 			this.player.idleX();
 		}
-
-		if(this.keyboard.S.isDown === true){
-			this.player.down();
+		else if(this.keyboard.D.isDown === true){
+			this.player.right();
 		}
-
-		if(this.keyboard.W.isDown === true){
-			this.player.up();
+		else if(this.keyboard.A.isDown === true){
+			this.player.left();
 		}
 
 		if(this.keyboard.S.isUp === true && this.keyboard.W.isUp === true){
 			this.player.idleY();
+		}
+		else if(this.keyboard.S.isDown === true){
+			this.player.down();
+		}
+		else if(this.keyboard.W.isDown === true){
+			this.player.up();
 		}
 	}
 
@@ -203,5 +211,15 @@ class GameScene extends Phaser.Scene {
 	{
 		var bullet = new EnemyBullet(this, x, y, 100).setScale(.5);
 		this.bulletSound.play(this.scene.bulletSoundConfig);
+	}
+
+	addLineOfSight(enemy,player)
+	{
+		var newLineOfSIght = new LineOfSight(this, enemy, player);
+	}
+
+	lineOfSightBlocked(line, wall)
+	{
+		line.setSightBlocked(true);
 	}
 }
