@@ -16,54 +16,32 @@ class GameScene extends Phaser.Scene {
 			// Create tileset and tilemap
 			this.map = this.make.tilemap({key: "room1"});
 			this.tileset = this.map.addTilesetImage('mc_tileset','mc_tiles');
-			this.floorLayer = this.map.createStaticLayer("floor", this.tileset, 0, 0);
-			this.wallLayer = this.map.createStaticLayer("walls", this.tileset, 0, 0);
+			this.floorLayer = this.map.createStaticLayer("Background", this.tileset, 0, 0);
+			this.wallLayer = this.map.createStaticLayer("Walls", this.tileset, 0, 0);
 			this.wallLayer.setCollisionByProperty({collides: true});
-			this.debugGraphics = this.add.graphics().setAlpha(0.75);
-
-			//add hitbox detection to walls
-			this.wallLayer.renderDebug(this.debugGraphics, {
-				tileColor: null, // Color of non-colliding tiles
-				collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-				faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-			  });
 
 			// Music config
 			this.music = this.sound.add("music");
 			var musicConfig = {
 				mute: false,
-				volume: 0.2,
+				volume: 0,
 				rate: 1,
 				detune: 0,
 				seek: 0,
 				loop: true,
 				delay: 0
 			}
-		
+
 			this.music.play(musicConfig);
 
 			// Use the crosshair as a cursor
 			this.input.setDefaultCursor('url(../images/crosshair.cur), pointer');
 
-			//loop through all objects in map
-			this.rooms = [];
-			this.map.findObject("Objects", function(object) {
+			this.player = new Player(this, 500, 500, 'player', 'player01.png')
+			this.player.create(this);
 
-				if (object.type === 'room') {
-					this.rooms.push(object);
-				}
-				//player is created on spawnpoint
-				if (object.name === 'spawnPoint') {
-					this.player = new Player(this, object.x, object.y, 'player', 'player01.png');
-					this.player.create(this);
-				}
-			}, this);
-
-			// create camera 
-			this.camera = this.cameras.main;
-			this.camera.startFollow(this.player);
-			//set camera bounds, player cannot see beyond void
-			this.camera.setBounds(0, 0, config.width, config.height);
+	    // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
+	    this.cameras.main.startFollow(this.player);
 
 			//collision detection with player vs wall
 			this.physics.add.collider(this.player, this.wallLayer);
@@ -100,71 +78,51 @@ class GameScene extends Phaser.Scene {
 			//make bullets disappear if hit an enemy
 			this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
 
-			//make enemy bullets disappear if hit wall
-			this.physics.add.overlap(this.enemyBullets, this.walls, this.disappear, null, this);
+		// create placeholder walls to test collison out
+		this.walls = this.add.group();
+		this.wallOne = new Wall(this, 100, 100, 'wall');
+		this.wallTwo = new Wall(this, 200, 200, 'wall');
 
-			//make enemy bullets disappear if hit an player
-			this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
+		// create placeholder enemies to test collision and player interactions
+		this.enemies = this.add.group();
+		this.enemy1 = new Enemy(this, 300, 100, 'wall');
+		this.enemy2 = new Enemy(this, 600, 300, 'wall');
 
-			//collision detection with player vs wall
-			this.physics.add.collider(this.player, this.wallLayer);
+		// create placeholder bullets to test out spawning multiple objects, .5 second delay
+		this.playerBullets = this.add.group();
+		this.fireRate = 500;
+		this.nextFire = 0;
 
-			//collision detection with enemy vs wall
-			this.physics.add.collider(this.enemies, this.wallLayer);
+		this.enemyBullets = this.add.group();
 
-			//collision detection with player vs enemy
-			this.physics.add.collider(this.player, this.enemies);
+		//bullet sound config
+		this.bulletSound = this.sound.add("shootSound");
+		this.bulletSoundConfig = {
+			mute: false,
+			volume: 0.2,
+		}
 
-			//collison detection between player bullets and the layer wall
-			this.physics.add.collider(this.playerBullets, this.wallLayer, this.disappear, null, this);
+		//make bullets disappear if hit wall
+		this.physics.add.overlap(this.playerBullets, this.walls, this.disappear, null, this);
 
-			//collison detection between enemy bullets and the layer wall
-			this.physics.add.collider(this.enemyBullets, this.wallLayer, this.disappear, null, this);
+		//make bullets disappear if hit an enemy
+		this.physics.add.overlap(this.playerBullets, this.enemies, this.disappear, null, this);
 
-			//collison between player and the walls
-			this.physics.add.collider(this.player, this.walls);
+		//collison between player and the walls
+		this.physics.add.collider(this.player, this.walls);
 
-			//collision detection with enemy vs wall
-			this.physics.add.collider(this.enemies, this.walls);
+		//make enemy bullets disappear if hit an player
+		this.physics.add.overlap(this.enemyBullets, this.player, this.disappear, null, this);
 
-			//collision between lineofsight and walls
-			this.physics.add.overlap(this.linesOfSight, this.walls, this.lineOfSightBlocked);
+		//collision between lineofsight and walls
+		this.physics.add.overlap(this.linesOfSight, this.walls, this.lineOfSightBlocked);
 			
-			//collision between lineofsight and wall layers
-			//this.physics.add.overlap(this.linesOfSight, this.wallLayer, this.lineOfSightBlocked);
+		//collision between lineofsight and wall layers
+		//this.physics.add.overlap(this.linesOfSight, this.wallLayer, this.lineOfSightBlocked);
 
-			// WASD controls
-			this.keyboard = this.input.keyboard.addKeys("W, A, S, D, R");
+		// WASD controls
+		this.keyboard = this.input.keyboard.addKeys("W, A, S, D, R");
 		}
-
-	/** The function that controls player movement */
-	playerMove() {
-		// THIS SECTION IS JUST FOR THE CONTROLS
-		if(this.keyboard.R.isDown === true)
-		{
-			this.player.roll();
-		}
-
-		if(this.keyboard.A.isDown === true && this.keyboard.D.isDown === true){
-			this.player.idleX();
-		}
-		else if(this.keyboard.D.isDown === true){
-			this.player.right();
-		}
-		else if(this.keyboard.A.isDown === true){
-			this.player.left();
-		}
-
-		if(this.keyboard.S.isUp === true && this.keyboard.W.isUp === true){
-			this.player.idleY();
-		}
-		else if(this.keyboard.S.isDown === true){
-			this.player.down();
-		}
-		else if(this.keyboard.W.isDown === true){
-			this.player.up();
-		}
-	}
 
 	/**The function that controls player shooting */
 	playerShoot() {
@@ -189,10 +147,10 @@ class GameScene extends Phaser.Scene {
 
 	/**The function called per frame to update every object */
 	update() {
-		this.playerMove();
+		this.player.update();
 		this.playerShoot();
 		this.player.getRoom();
-		this.roomChange();
+		//this.roomChange();
 	}
 
 	/**Creates a bullet class */
@@ -205,7 +163,7 @@ class GameScene extends Phaser.Scene {
 	disappear(bullet, wall){
 		bullet.destroy();
 	}
-	
+
 
 	enemyFire(x,y)
 	{

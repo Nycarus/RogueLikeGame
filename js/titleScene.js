@@ -17,7 +17,7 @@ class TitleScene extends Phaser.Scene {
 		this.load.image('background', '../images/background.jpg');
 		//Load tileset and tilemap
 		this.load.image('mc_tiles', 'images/tilesets/minecraft_tileset.png');
-		this.load.tilemapTiledJSON('room1', 'images/tilesets/mc_dungeon.json');
+		this.load.tilemapTiledJSON('room1', 'images/tilesets/roomNESW.json');
 
 		//Loading atlas and images used for the game
 		this.load.image('gameBackground', '../images/hahaa.jpg');
@@ -25,15 +25,20 @@ class TitleScene extends Phaser.Scene {
 		this.load.image('bullet', '../images/bullet.png');
 		this.load.atlas('player', '../images/player.png', '../images/player.json');
 
+		//Load spritesheet used for the dungeon
+		this.load.image("tiles", "../images/testTiles.png");
+
 		//Load music and sound effects
 		this.load.audio("shootSound", "../sound/shoot.mp3");
 		this.load.audio("music", "../sound/tempMusic.mp3");
 	}
 
-
 	/**Loads assets used for the scene
 	*/
 	create() {
+			// Disable right click bringing up browser menu
+			game.input.mouse.disableContextMenu();
+
 			//Title screen background
 		 	var bg = this.add.sprite(0,0,'background');
 		  bg.setOrigin(0,0);
@@ -47,7 +52,7 @@ class TitleScene extends Phaser.Scene {
 	/**Function to switch game scenes
 	*/
 	clickButton() {
-    this.scene.switch('gameScene');
+    this.scene.switch('dungeonScene');
 	}
 
 }
