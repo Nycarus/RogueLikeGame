@@ -7,12 +7,57 @@ class PlayerHUD extends Phaser.Scene {
     this.dungeonScene = data.prevScene;
   }
 
+  preload() {
+      let room = this.dungeonScene.dungeonGenerator.playerRoom;
+      let w = (room.width - 1) | 0;
+      let h = (room.height / 2) | 0;
+      //Load minimap room images
+      //this.load.image('room00', '../images/rooms/room00.png');
+      //this.load.image('room05105510', '../images/rooms/room01.png');
+      //this.load.image('room50105510', '../images/rooms/room02.png');
+      //this.load.image('room5005105', '../images/rooms/room03.png');
+      //this.load.image('room5005510', '../images/rooms/room04.png');
+      //this.load.image('room5005', '../images/rooms/room05.png');
+      //this.load.image('room05510', '../images/rooms/room06.png');
+      //this.load.image('room105510', '../images/rooms/room07.png');
+      //this.load.image('room50105', '../images/rooms/room08.png');
+      //this.load.image('room09', '../images/rooms/room09.png');
+      //this.load.image('room10', '../images/rooms/room10.png');
+      //this.load.image('room05105', '../images/rooms/room11.png');
+      //this.load.image('room50510', '../images/rooms/room12.png');
+      //this.load.image('room105', '../images/rooms/room13.png');
+      //this.load.image('room510', '../images/rooms/room14.png');
+      //this.load.image('room05', '../images/rooms/room15.png');
+      //this.load.image('room50', '../images/rooms/room16.png');
+      this.load.image(`room0${h}${w}${h}${h}${w}`, '../images/rooms/room01.png');
+      this.load.image(`room${h}0${w}${h}${h}${w}`, '../images/rooms/room02.png');
+      this.load.image(`room${h}00${h}${w}${h}`, '../images/rooms/room03.png');
+      this.load.image(`room${h}00${h}${h}${w}`, '../images/rooms/room04.png');
+      this.load.image(`room${h}00${h}`, '../images/rooms/room05.png');
+      this.load.image(`room0${h}${h}${w}`, '../images/rooms/room06.png');
+      this.load.image(`room${w}${h}${h}${w}`, '../images/rooms/room07.png');
+      this.load.image(`room${h}0${w}${h}`, '../images/rooms/room08.png');
+      this.load.image(`room${w}${h}${h}${w}`, '../images/rooms/room07.png');
+      this.load.image('room09', '../images/rooms/room09.png');
+      this.load.image('room10', '../images/rooms/room10.png');
+      this.load.image(`room0${h}${w}${h}`, '../images/rooms/room11.png');
+      this.load.image(`room${h}0${h}${w}`, '../images/rooms/room12.png');
+      this.load.image(`room${w}${h}`, '../images/rooms/room13.png');
+      this.load.image(`room${h}${w}`, '../images/rooms/room14.png');
+      this.load.image(`room0${h}`, '../images/rooms/room15.png');
+      this.load.image(`room${h}0`, '../images/rooms/room16.png');
+
+      //Load X mark image
+      this.load.image('x', '../images/rooms/x.png');
+      //Load tracked room image
+      this.load.image('grey','../images/rooms/grey.png');
+  }
+
   create(){
-    this.dungeonScene = this.scene.get('dungeonScene');
+    //this.dungeonScene = this.scene.get('dungeonScene');
     this.dungeonGenerator = this.dungeonScene.dungeonGenerator;
 
     this.currentRoom = this.dungeonGenerator.playerRoom;
-    //console.log(this.dungeonScene.dungeonGenerator.dungeon.rooms);
 
     this.drawMiniMap();
 
@@ -23,7 +68,7 @@ class PlayerHUD extends Phaser.Scene {
       this.dungeonGenerator.playerRoom.centerY * 3 + 1, 'x');
 
     this.ammoText = this.dungeonScene.add.text(this.cameras.main.centerX * 2 - 75, this.cameras.main.centerY * 2 - 25, "");
-    //this.ammoText = this.dungeonScene.add.text(20, 20, "");
+
     this.ammoText.setScrollFactor(0);
 
     this.reloadText = this.dungeonScene.add.text(this.dungeonScene.player.x, this.dungeonScene.player.y, "");
@@ -37,6 +82,7 @@ class PlayerHUD extends Phaser.Scene {
     this.barLength = 0;
   }
 
+  /*Checks if the player has changed rooms */
   roomChange() {
     if (this.dungeonGenerator.playerRoom === this.currentRoom) {
       return false;
@@ -44,6 +90,7 @@ class PlayerHUD extends Phaser.Scene {
     return true;
   }
 
+  /*If the room changes, updates player location on minimap */
   drawPlayerPoint() {
     if (this.roomChange()) {
       this.currentRoom = this.dungeonGenerator.playerRoom;
@@ -52,11 +99,14 @@ class PlayerHUD extends Phaser.Scene {
       //redraw player point
       this.playerPoint.destroy();
       this.playerPoint = this.add.sprite(this.currentRoom.centerX * 3 + config.width/8 * 6 + 1, this.currentRoom.centerY * 3 + 1, 'x');
+      //update minimap
+      this.drawMiniMap();
     }
   } 
 
+  /*Draws all rooms of dungeon on minimap, then adds room images according to doors of dungeon rooms. */
   drawMiniMap() {
-    this.dungeonScene.dungeonGenerator.dungeon.rooms.forEach(room => {
+      var room = this.dungeonGenerator.playerRoom;  
       var doors = room.getDoorLocations();
       if (doors.length === 1) {
         this.add.sprite(room.x * 3 + config.width/8 * 6, room.y * 3, 'room' + doors[0].x.toString() + doors[0].y.toString()).setOrigin(0,0);
@@ -73,9 +123,8 @@ class PlayerHUD extends Phaser.Scene {
         + doors[2].x.toString() + doors[2].y.toString()).setOrigin(0,0);
       }
       else {
-        this.add.sprite(room.x * 3 + config.width/8 * 6, room.y * 3, 'room00').setOrigin(0,0);
+        this.add.sprite(room.x * 3 + config.width/8 * 6, room.y * 3, 'room09').setOrigin(0,0);
       }
-    });
   }
 
   drawHealthBar(){
