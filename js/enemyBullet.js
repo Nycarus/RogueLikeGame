@@ -10,7 +10,7 @@ class EnemyBullet extends Bullet{
       super(scene, x, y, 'bullet');
       scene.enemyBullets.add(this);
   
-      // Moves the bullet from the player to the mouse cursor
+      // Moves the bullet from the enemy to the player
       scene.physics.moveTo(this, scene.player.x, scene.player.y, playerSettings.bulletSpeed, null);
     }
   }

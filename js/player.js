@@ -33,6 +33,9 @@ class Player extends Phaser.Physics.Arcade.Sprite{
     this.roomChange = false;
     this.keyboard = scene.input.keyboard.addKeys("W, A, S, D, E");
 
+    this.rollingDuration = 500;
+    this.rollingTimer = 0;
+    this.isRolling = false;
   }
 
   /**Loads assets used for the scene
@@ -110,31 +113,38 @@ class Player extends Phaser.Physics.Arcade.Sprite{
   update(){
     const prevVelocity = this.body.velocity.clone();
 
-    // Stop any previous movement from the last frame
-    this.setVelocity(0);
+    if(!this.isRolling){
+      // Stop any previous movement from the last frame
+      this.setVelocity(0);
 
-    // Horizontal movement
-    if (this.keyboard.A.isDown) {
-      this.setVelocityX(-playerSettings.playerSpeed);
-      this.setFlipX(true);
-    }
-    else if (this.keyboard.D.isDown) {
-      this.setVelocityX(playerSettings.playerSpeed);
-      this.setFlipX(false);
+      if (this.keyboard.E.isDown && ( this.keyboard.A.isDown || this.keyboard.D.isDown ||
+         this.keyboard.W.isDown || this.keyboard.S.isDown)) {
+        this.rollingTimer = this.scene.time.now + this.rollingDuration;
+        playerSettings.playerSpeed = 500;
+        this.isRolling = true;
+      }
+
+      // Horizontal movement
+      if (this.keyboard.A.isDown) {
+        this.setVelocityX(-playerSettings.playerSpeed);
+        this.setFlipX(true);
+      }
+      else if (this.keyboard.D.isDown) {
+        this.setVelocityX(playerSettings.playerSpeed);
+        this.setFlipX(false);
+      }
+
+      // Vertical movement
+      if (this.keyboard.W.isDown) {
+        this.setVelocityY(-playerSettings.playerSpeed);
+      } else if (this.keyboard.S.isDown) {
+        this.setVelocityY(playerSettings.playerSpeed);
+      }
     }
 
-    // Vertical movement
-    if (this.keyboard.W.isDown) {
-      this.setVelocityY(-playerSettings.playerSpeed);
-    } else if (this.keyboard.S.isDown) {
-      this.setVelocityY(playerSettings.playerSpeed);
-    }
-
-    if (this.keyboard.E.isDown) {
-      playerSettings.playerSpeed = 900;
-    }
-    if(this.keyboard.E.getDuration() >= 75) {
+    if(this.scene.time.now > this.rollingTimer) {
       playerSettings.playerSpeed = 300;
+      this.isRolling = false;
     }
 
     // Normalize and scale the velocity so that sprite can't move faster along a diagonal
