@@ -6,8 +6,8 @@ class DungeonGenerator {
   create(){
     this.hasPlayerReachedStairs = false
     this.dungeon = new Dungeon({
-      width: 50,
-      height: 50,
+      width: 75,
+      height: 75,
       doorPadding: 5,  
       rooms: {
         width: { min: 10, max: 11, onlyOdd: true},
@@ -121,8 +121,8 @@ class DungeonGenerator {
 
   // Place the player in the first room
   this.playerRoom = startRoom;
-  const x = map.tileToWorldX(this.playerRoom.centerX);
-  const y = map.tileToWorldY(this.playerRoom.centerY);
+  const x = map.tileToWorldX(this.playerRoom.centerX + 0.7);
+  const y = map.tileToWorldY(this.playerRoom.centerY + 0.5);
   this.scene.player.setX(x);
   this.scene.player.setY(y);
   this.scene.player.setDepth(2);

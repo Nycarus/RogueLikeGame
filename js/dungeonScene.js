@@ -124,6 +124,6 @@ class DungeonScene extends Phaser.Scene {
 	enemyFire(x,y)
 	{
 		var bullet = new EnemyBullet(this, x, y, 100).setScale(.5);
-		this.bulletSound.play(this.scene.bulletSoundConfig);
+		//this.bulletSound.play(this.scene.bulletSoundConfig);
 	}
 }

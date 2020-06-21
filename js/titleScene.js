@@ -24,6 +24,7 @@ class TitleScene extends Phaser.Scene {
 		this.load.image('wall', '../images/wall.png');
 		this.load.image('bullet', '../images/bullet.png');
 		this.load.atlas('player', '../images/player.png', '../images/player.json');
+		//this.load.atlas('player', '../images/tapman/tapman.png', '../images/tapman/tapman.json');
 
 		//Load spritesheet used for the dungeon
 		this.load.image("tiles", "../images/testTiles.png");

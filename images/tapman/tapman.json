@@ -1,0 +1,28 @@
+<TextureAtlas imagePath="sprites.png">
+	<SubTexture name="tapman_01.png" x="96" y="0" width="18" height="54"/>
+	<SubTexture name="tapman_02.png" x="116" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_03.png" x="116" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_04.png" x="116" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_05.png" x="116" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_06.png" x="116" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_07.png" x="116" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_08.png" x="116" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_09.png" x="116" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_10.png" x="116" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_11.png" x="96" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_12.png" x="96" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_13.png" x="96" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_14.png" x="96" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_15.png" x="96" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_16.png" x="96" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_17.png" x="96" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_18.png" x="96" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_19.png" x="96" y="56" width="18" height="53"/>
+	<SubTexture name="tapman_20.png" x="116" y="0" width="18" height="54"/>
+	<SubTexture name="tapman_21.png" x="64" y="54" width="30" height="53"/>
+	<SubTexture name="tapman_22.png" x="64" y="0" width="30" height="52"/>
+	<SubTexture name="tapman_23.png" x="0" y="56" width="30" height="52"/>
+	<SubTexture name="tapman_24.png" x="0" y="0" width="30" height="54"/>
+	<SubTexture name="tapman_25.png" x="32" y="57" width="30" height="55"/>
+	<SubTexture name="tapman_26.png" x="32" y="0" width="30" height="55"/>
+</TextureAtlas>
